@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">PI-TIME11</string>
+    <string name="login_label">Login</string>
+    <string name="name_label">Nome:</string>
+    <string name="email_label">Email:</string>
+    <string name="cpf_label">CPF:</string>
+    <string name="idade_label">Idade:</string>
+    <string name="celular_label">Celular:</string>
+    <string name="senha_label">Senha:</string>
+    <string name="cadastrar_label">Cadastre-se</string>
+    <string name="hint_name">Nome</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_senha">Senha</string>
+    <string name="hint_idade">Data de Nascimento</string>
+    <string name="hint_cpf">CPF</string>
+    <string name="hint_celular">Celular</string>
+    <string name="btn_cadastrar">Cadastrar</string>
+    <string name="btn_sair">Sair</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_continuarSlogin">Continuar sem Login</string>
+    <string name="btn_recuperarsenha">Esqueci minha senha</string>
+    <string name="btn_voltar">Voltar</string>
 </resources>
