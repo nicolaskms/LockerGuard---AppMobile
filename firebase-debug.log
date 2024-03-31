@@ -1,0 +1,65 @@
+[debug] [2024-03-23T23:30:30.305Z] ----------------------------------------------------------------------
+[debug] [2024-03-23T23:30:30.307Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\55119\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2024-03-23T23:30:30.307Z] CLI Version:   13.5.2
+[debug] [2024-03-23T23:30:30.307Z] Platform:      win32
+[debug] [2024-03-23T23:30:30.308Z] Node Version:  v18.18.0
+[debug] [2024-03-23T23:30:30.309Z] Time:          Sat Mar 23 2024 20:30:30 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2024-03-23T23:30:30.309Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-03-23T23:30:30.363Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-03-23T23:30:30.363Z] > authorizing via signed-in user (keisnordo@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\55119
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2024-03-23T23:30:57.649Z] Using project from CLI flag: projeto-pi-iii
+[debug] [2024-03-23T23:30:57.650Z] > refreshing access token with scopes: []
+[debug] [2024-03-23T23:30:57.652Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-03-23T23:30:57.652Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-03-23T23:30:57.898Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-03-23T23:30:57.898Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-03-23T23:30:57.907Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/projeto-pi-iii [none]
+[debug] [2024-03-23T23:30:58.330Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/projeto-pi-iii 200
+[debug] [2024-03-23T23:30:58.331Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/projeto-pi-iii {"projectId":"projeto-pi-iii","projectNumber":"507577851170","displayName":"projeto-pi-iii","name":"projects/projeto-pi-iii","resources":{"hostingSite":"projeto-pi-iii","storageBucket":"projeto-pi-iii.appspot.com","locationId":"southamerica-east1"},"state":"ACTIVE","etag":"1_37353ae2-e161-450b-85ea-5039ef7af715"}
+[info] i  Using project projeto-pi-iii (projeto-pi-iii) 
+[info] 
+=== Firestore Setup
+[debug] [2024-03-23T23:30:58.337Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/projeto-pi-iii/services/firestore.googleapis.com [none]
+[debug] [2024-03-23T23:30:58.337Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/projeto-pi-iii/services/firestore.googleapis.com x-goog-quota-user=projects/projeto-pi-iii
+[debug] [2024-03-23T23:30:59.576Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/projeto-pi-iii/services/firestore.googleapis.com 200
+[debug] [2024-03-23T23:30:59.576Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/projeto-pi-iii/services/firestore.googleapis.com [omitted]
+[debug] [2024-03-23T23:30:59.577Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/projeto-pi-iii/databases/(default) [none]
+[debug] [2024-03-23T23:30:59.849Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/projeto-pi-iii/databases/(default) 200
+[debug] [2024-03-23T23:30:59.849Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/projeto-pi-iii/databases/(default) {"name":"projects/projeto-pi-iii/databases/(default)","uid":"aadedaf8-a0fe-402f-b45c-ed233926e8c2","createTime":"2024-02-25T17:01:34.947102Z","updateTime":"2024-02-25T17:01:34.947102Z","locationId":"southamerica-east1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2024-03-23T22:31:00.254923Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"i","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","etag":"IP2si6rFi4UDMLP1/5LfzIQD"}
+[debug] [2024-03-23T23:30:59.849Z] database_type: FIRESTORE_NATIVE
+[debug] [2024-03-23T23:30:59.849Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-03-23T23:30:59.850Z] > authorizing via signed-in user (keisnordo@gmail.com)
+[debug] [2024-03-23T23:30:59.850Z] [iam] checking project projeto-pi-iii for permissions ["firebase.projects.get"]
+[debug] [2024-03-23T23:30:59.850Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/projeto-pi-iii:testIamPermissions [none]
+[debug] [2024-03-23T23:30:59.850Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/projeto-pi-iii:testIamPermissions x-goog-quota-user=projects/projeto-pi-iii
+[debug] [2024-03-23T23:30:59.850Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/projeto-pi-iii:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2024-03-23T23:31:00.837Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/projeto-pi-iii:testIamPermissions 200
+[debug] [2024-03-23T23:31:00.837Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/projeto-pi-iii:testIamPermissions {"permissions":["firebase.projects.get"]}
+[info] 
+[info] Firestore Security Rules allow you to define how and when to allow
+[info] requests. You can keep these rules in your project directory
+[info] and publish them with firebase deploy.
+[info] 
