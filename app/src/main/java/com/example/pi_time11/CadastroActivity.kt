@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
@@ -80,6 +81,8 @@ class CadastroActivity : AppCompatActivity() {
                                     .set(user)
                                     .addOnSuccessListener {
                                         Log.d(TAG, "DocumentSnapshot added with ID: $userId")
+                                        //envia email de verificacao
+                                        sendEmailVerification()
 
                                         // Navega para a próxima tela após o cadastro
                                         val intent = Intent(this, LoginActivity::class.java)
@@ -102,5 +105,15 @@ class CadastroActivity : AppCompatActivity() {
                 Toast.makeText(baseContext, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    private fun sendEmailVerification() {
+        // [START send_email_verification]
+        val user = Firebase.auth.currentUser
+        user!!.sendEmailVerification()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Email sent.")
+                }
+            }
     }
 }
