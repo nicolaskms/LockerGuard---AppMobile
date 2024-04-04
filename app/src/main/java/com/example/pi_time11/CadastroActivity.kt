@@ -1,10 +1,16 @@
 package com.example.pi_time11
 
+
+import android.content.ContentValues.TAG
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -17,9 +23,12 @@ class CadastroActivity : AppCompatActivity() {
     private lateinit var etCelular: TextInputLayout
     private lateinit var etSenha: TextInputLayout
 
+    private val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cadastro)
+
 
         btnVoltar = findViewById(R.id.btnVoltar)
         btnCadastrar = findViewById(R.id.btnCadastrar)
@@ -33,8 +42,32 @@ class CadastroActivity : AppCompatActivity() {
 
 
         btnCadastrar.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+
+            val sNome = etNome.editText?.text.toString()
+            val sEmail = etEmail.editText?.text.toString()
+            val sIdade = etIdade.editText?.text.toString()
+            val sCPF = etCPF.editText?.text.toString()
+            val sCelular = etCelular.editText?.text.toString()
+            val sSenha = etSenha.editText?.text.toString()
+
+            val user = hashMapOf(
+                "name" to sNome,
+                "email" to sEmail,
+                "idade" to sIdade,
+                "cpf" to sCPF,
+                "celular" to sCelular,
+                "senha" to sSenha
+            )
+
+
+            db.collection("users")
+                .add(user)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
         }
 
         btnVoltar.setOnClickListener {
