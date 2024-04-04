@@ -1,16 +1,17 @@
 package com.example.pi_time11
 
-
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -23,12 +24,16 @@ class CadastroActivity : AppCompatActivity() {
     private lateinit var etCelular: TextInputLayout
     private lateinit var etSenha: TextInputLayout
 
-    private val db = Firebase.firestore
+    private var db = Firebase.firestore
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cadastro)
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         btnVoltar = findViewById(R.id.btnVoltar)
         btnCadastrar = findViewById(R.id.btnCadastrar)
@@ -50,31 +55,52 @@ class CadastroActivity : AppCompatActivity() {
             val sCelular = etCelular.editText?.text.toString()
             val sSenha = etSenha.editText?.text.toString()
 
-            val user = hashMapOf(
-                "name" to sNome,
-                "email" to sEmail,
-                "idade" to sIdade,
-                "cpf" to sCPF,
-                "celular" to sCelular,
-                "senha" to sSenha
-            )
+            if (sNome.isNotEmpty() && sEmail.isNotEmpty() && sIdade.isNotEmpty() &&
+                sCPF.isNotEmpty() && sCelular.isNotEmpty() && sSenha.isNotEmpty()) {
 
+                // Cria o usuário no Firebase Authentication
+                auth.createUserWithEmailAndPassword(sEmail, sSenha)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Cadastro bem-sucedido, obtém o ID do usuário
+                            val userId = auth.currentUser?.uid
 
-            db.collection("users")
-                .add(user)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
-        }
+                            // Cria um mapa com os dados do usuário
+                            val user = hashMapOf(
+                                "name" to sNome,
+                                "email" to sEmail,
+                                "idade" to sIdade,
+                                "cpf" to sCPF,
+                                "celular" to sCelular
+                            )
 
-        btnVoltar.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            //proximo finish() estudar se é realmente necessario
-            finish()
+                            // Adiciona os dados do usuário ao Firestore
+                            if (userId != null) {
+                                db.collection("users").document(userId)
+                                    .set(user)
+                                    .addOnSuccessListener {
+                                        Log.d(TAG, "DocumentSnapshot added with ID: $userId")
+
+                                        // Navega para a próxima tela após o cadastro
+                                        val intent = Intent(this, LoginActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w(TAG, "Error adding document", e)
+                                    }
+                            }
+                        } else {
+                            // Exibe mensagem em caso de falha no cadastro
+                            Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                            // Exemplo de mensagem de erro
+                            Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } else {
+                // Exibe mensagem se algum campo estiver vazio
+                Toast.makeText(baseContext, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
