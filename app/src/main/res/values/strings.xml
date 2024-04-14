@@ -20,7 +20,4 @@
     <string name="btn_continuarSlogin">Continuar sem Login</string>
     <string name="btn_recuperarsenha">Esqueci minha senha</string>
     <string name="btn_voltar">Voltar</string>
-    <string name="qrcode_label">QR CODE</string>
-    <string name="idarmario_label">ID - ARMÁRIO</string>
-    <string name="idnumber_label">123456</string>
 </resources>
