@@ -19,6 +19,7 @@ import com.google.firebase.auth.auth
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
+    private lateinit var buttonCadastrarCartao: Button
     private lateinit var buttonSair: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
@@ -31,6 +32,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        buttonCadastrarCartao = findViewById(R.id.buttonCadastrarCartao)
         buttonSair = findViewById(R.id.buttonSair)
 
         auth = Firebase.auth
@@ -38,6 +40,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         buttonSair.setOnClickListener {
             auth.signOut()
             val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        buttonCadastrarCartao.setOnClickListener{
+            val intent = Intent(this, CartaoActivity::class.java)
             startActivity(intent)
             finish()
         }

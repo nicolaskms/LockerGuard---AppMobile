@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PI-TIME11</string>
+    <string name="app_name">LockerGuard</string>
     <string name="login_label">Login</string>
     <string name="name_label">Nome:</string>
     <string name="email_label">Email:</string>
@@ -20,4 +20,11 @@
     <string name="btn_continuarSlogin">Continuar sem Login</string>
     <string name="btn_recuperarsenha">Esqueci minha senha</string>
     <string name="btn_voltar">Voltar</string>
+    <string name="recuperarsenha_label">Recupere sua Senha</string>
+    <string name="btn_enviar">Enviar</string>
+    <string name="cartao_label">Adicionar cartão</string>
+    <string name="hint_cartao">Números do Cartão</string>
+    <string name="hint_Dataval">Data de vencimento</string>
+    <string name="hint_cvv">CVV</string>
+    <string name="btn_cadastrar_card">Cadastrar Cartão</string>
 </resources>

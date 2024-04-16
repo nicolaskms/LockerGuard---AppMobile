@@ -24,4 +24,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="15dp"/>
+
+    <Button
+        android:id="@+id/buttonCadastrarCartao"
+        android:textAllCaps="false"
+        android:layout_width="130dp"
+        android:hint="@string/btn_cadastrar_card"
+        android:textColorHint="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"/>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

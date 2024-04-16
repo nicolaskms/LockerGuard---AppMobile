@@ -46,6 +46,10 @@ class CadastroActivity : AppCompatActivity() {
         etCelular = findViewById(R.id.etCelular)
         etSenha = findViewById(R.id.etSenha)
 
+        btnVoltar.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         btnCadastrar.setOnClickListener {
 
