@@ -61,6 +61,11 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        buttonRecuperar.setOnClickListener {
+            val intent = Intent(this, RecuperarSenhaActivity::class.java)
+            startActivity(intent)
+        }
+
         buttonSair.setOnClickListener{
             auth.signOut()
             finish()

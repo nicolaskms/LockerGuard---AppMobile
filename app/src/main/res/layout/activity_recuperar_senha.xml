@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".RecuperarSenhaActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/recuperarsenha_label"
+        android:textSize="24sp"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="360dp"
+        android:layout_margin="5dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:startIconDrawable="@drawable/ic_email"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_email"
+        android:layout_gravity="center">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/eTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/HintTextStyle"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/buttonEnviar"
+        android:textAllCaps="false"
+        android:layout_width="130dp"
+        android:hint="@string/btn_enviar"
+        android:textColorHint="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"/>
+
+    <Button
+        android:id="@+id/buttonVoltar"
+        android:text="@string/btn_voltar"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        android:textColorHint="@color/white"
+        android:layout_width="190dp"
+        android:textSize="15sp"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_height="48dp"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
