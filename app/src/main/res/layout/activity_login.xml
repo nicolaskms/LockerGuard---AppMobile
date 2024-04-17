@@ -5,6 +5,7 @@
     tools:context=".LoginActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <ImageView
@@ -13,7 +14,6 @@
         android:src="@drawable/img"
         android:layout_width="140dp"
         android:layout_height="140dp"/>
-
 
     <TextView
         android:layout_width="match_parent"
@@ -57,7 +57,6 @@
         android:layout_gravity="center"
         app:boxCornerRadiusTopStart="10dp"
         app:startIconDrawable="@drawable/ic_password"
-        app:passwordToggleEnabled="true"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -68,23 +67,23 @@
             android:inputType="textPassword"
             />
 
+        <Button
+            android:id="@+id/buttonRecuperar"
+            android:text="@string/btn_recuperarsenha"
+            android:textAllCaps="false"
+            android:textColorHint="@color/background"
+            android:layout_width="wrap_content"
+            android:textSize="12sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"/>
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/buttonRecuperar"
-        android:text="@string/btn_recuperarsenha"
-        android:textAllCaps="false"
-        android:layout_gravity="end"
-        android:textColorHint="@color/white"
-        android:layout_width="190dp"
-        android:textSize="12sp"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_height="48dp"/>
 
     <Button
         android:id="@+id/buttonLogin"
         android:layout_marginTop="40dp"
         android:layout_gravity="center"
+        android:textColorHint="@color/background"
         android:textAllCaps="false"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
@@ -96,7 +95,7 @@
         android:layout_gravity="center"
         android:textAllCaps="false"
         android:hint="@string/btn_cadastrar"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/background"
         android:layout_width="130dp"
         android:layout_height="wrap_content"/>
 
@@ -106,7 +105,7 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:textAllCaps="false"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/background"
         android:layout_width="190dp"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_height="wrap_content"/>
@@ -117,10 +116,9 @@
         android:textAllCaps="false"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/background"
         android:layout_width="130dp"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_height="wrap_content"/>
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>
