@@ -28,7 +28,7 @@
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
-        app:startIconDrawable="@drawable/ic_card"
+        app:startIconDrawable="@drawable/ic_newcard"
         android:layout_marginTop="5dp"
         android:layout_margin="5dp"
         app:counterMaxLength="16"
@@ -41,7 +41,7 @@
             android:hint="@string/hint_cartao"
             android:inputType="text"
             android:textAppearance="@style/HintTextStyle"
-            app:counterMaxLength="16" />
+            android:maxLength="16" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -64,7 +64,7 @@
             android:id="@+id/eTextCVV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:counterMaxLength="3"
+            android:maxLength="3"
             android:textAppearance="@style/HintTextStyle"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:textAppearance="@style/HintTextStyle"
             android:layout_height="wrap_content"
-            app:counterMaxLength="4"
+            android:maxLength="4"
             android:inputType="date"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -121,6 +121,31 @@
             android:inputType="number"
             android:maxLength="11"
             android:textAppearance="@style/HintTextStyle" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etApelido"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:startIconDrawable="@drawable/ic_card"
+        android:layout_marginTop="5dp"
+        android:layout_margin="5dp"
+        app:counterMaxLength="40"
+        android:layout_gravity="center">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/eTextName"
+            android:layout_width="match_parent"
+            app:counterMaxLength="40"
+            android:hint="@string/hint_Apelido"
+            android:textAppearance="@style/HintTextStyle"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

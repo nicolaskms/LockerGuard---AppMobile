@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
@@ -20,6 +21,7 @@ class CartaoActivity : AppCompatActivity() {
     private lateinit var etCvv: TextInputLayout
     private lateinit var etDataval: TextInputLayout
     private lateinit var etCPF: TextInputLayout
+    private lateinit var etApelido: TextInputLayout
 
 
     private var db = FirebaseFirestore.getInstance()
@@ -41,6 +43,7 @@ class CartaoActivity : AppCompatActivity() {
         etCvv = findViewById(R.id.etCvv)
         etDataval = findViewById(R.id.etDataval)
         etCPF = findViewById(R.id.etCPF)
+        etApelido = findViewById(R.id.etApelido)
 
         btnVoltar.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -54,16 +57,19 @@ class CartaoActivity : AppCompatActivity() {
             val sCvv = etCvv.editText?.text.toString()
             val sDataval = etDataval.editText?.text.toString()
             val sCPF = etCPF.editText?.text.toString()
+            val sApelido = etApelido.editText?.text.toString()
 
             if (sCard.isNotEmpty() && sCvv.isNotEmpty() && sDataval.isNotEmpty() &&
-                sCPF.isNotEmpty()) {
+                sCPF.isNotEmpty() && sApelido.isNotEmpty()) {
 
                 // Cria um novo cartão
                 val cartao = hashMapOf(
                     "card" to sCard,
                     "cvv" to sCvv,
                     "dataval" to sDataval,
-                    "cpf" to sCPF
+                    "cpf" to sCPF,
+                    "Apelido" to sApelido
+
                 )
 
                 // Adiciona os dados do cartão ao Firestore
@@ -83,7 +89,7 @@ class CartaoActivity : AppCompatActivity() {
 
             } else {
                 // Exibe mensagem se algum campo estiver vazio
-                Toast.makeText(baseContext, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "Por favor, preencha os requisitos de todos os campos!", Toast.LENGTH_SHORT).show()
             }
         }
     }

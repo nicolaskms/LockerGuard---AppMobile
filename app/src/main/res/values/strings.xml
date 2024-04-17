@@ -27,4 +27,5 @@
     <string name="hint_Dataval">Data de vencimento</string>
     <string name="hint_cvv">CVV</string>
     <string name="btn_cadastrar_card">Cadastrar Cartão</string>
+    <string name="hint_Apelido">Apelido do Cartão</string>
 </resources>

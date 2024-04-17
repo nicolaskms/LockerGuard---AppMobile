@@ -81,13 +81,13 @@
 
     <Button
         android:id="@+id/buttonLogin"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        android:textColorHint="@color/background"
         android:textAllCaps="false"
+        android:hint="@string/btn_login"
+        android:textColorHint="@color/background"
         android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_login"/>
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/buttonCadastrar"
