@@ -30,4 +30,5 @@
     <string name="id_armario">ID Armario</string>
     <string name="endereco">Endereço</string>
     <string name="btn_continuar">Continuar</string>
+    <string name="hint_Apelido">Apelido do Cartão</string>
 </resources>
