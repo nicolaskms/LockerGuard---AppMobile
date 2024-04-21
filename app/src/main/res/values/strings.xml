@@ -29,6 +29,7 @@
     <string name="btn_cadastrar_card">Cadastrar Cartão</string>
     <string name="id_armario">ID Armario</string>
     <string name="endereco">Endereço</string>
-    <string name="btn_continuar">Continuar</string>
+    <string name="btn_continuar">Continuar</string>]
+    <string name="btn_cartaosalvo">Cartões Salvos</string>
     <string name="hint_Apelido">Apelido do Cartão</string>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#d2d0d3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,16 +24,7 @@
         android:textColorHint="@color/white"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="38dp"/>
 
-    <Button
-        android:id="@+id/buttonCadastrarCartao"
-        android:textAllCaps="false"
-        android:layout_width="130dp"
-        android:hint="@string/btn_cadastrar_card"
-        android:textColorHint="@color/white"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="15dp"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

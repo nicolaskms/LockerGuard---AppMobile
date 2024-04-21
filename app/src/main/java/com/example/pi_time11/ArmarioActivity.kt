@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ArmarioActivity : AppCompatActivity() {
 
     private lateinit var buttonVoltar: Button
-    private lateinit var btn_compra: Button
+    private lateinit var btnContinuar: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +31,8 @@ class ArmarioActivity : AppCompatActivity() {
         val id = intent.getStringExtra("id")
 
         buttonVoltar = findViewById(R.id.btnVoltar)
+        btnContinuar = findViewById(R.id.btn_compra)
+
         // Exibindo os dados nos TextViews
         findViewById<TextView>(R.id.valor_endereco).text = localizacao
         findViewById<TextView>(R.id.id_armario).text = id
@@ -45,6 +47,11 @@ class ArmarioActivity : AppCompatActivity() {
             finish()
         }
 
+        btnContinuar.setOnClickListener {
+            // Iniciar a atividade de pagamento (CartaoActivity)
+            val intent = Intent(this, OpcoesActivity::class.java)
+            startActivity(intent)
+        }
 
         armariosRef.get() //  inicia a consulta ao Firestore para obter o documento da coleção "armarios"
             .addOnSuccessListener { document ->
