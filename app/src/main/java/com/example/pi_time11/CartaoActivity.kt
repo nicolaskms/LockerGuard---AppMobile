@@ -29,6 +29,9 @@ class CartaoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cartao)
 
+        val tempoSelecionado = intent.getStringExtra("tempoSelecionado")
+        val id = intent.getStringExtra("id")
+
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
@@ -43,11 +46,15 @@ class CartaoActivity : AppCompatActivity() {
 
         btnVoltar.setOnClickListener {
             val intent = Intent(this, PagamentoActivity::class.java)
+            intent.putExtra("tempoSelecionado", tempoSelecionado)
+            intent.putExtra("id", id)
             startActivity(intent)
             finish()
         }
 
         btnCadastrar.setOnClickListener {
+            intent.putExtra("tempoSelecionado", tempoSelecionado)
+            intent.putExtra("id", id)
             val sCard = etCard.editText?.text.toString()
             val sCvv = etCvv.editText?.text.toString()
             val sDataval = etDataval.editText?.text.toString()
@@ -82,9 +89,7 @@ class CartaoActivity : AppCompatActivity() {
 
                             // Exibe mensagem de sucesso
                             Toast.makeText(this, "Cartão salvo com sucesso!", Toast.LENGTH_SHORT).show()
-
-                            // Navega de volta para a MapsActivity
-                            val intent = Intent(this, PagamentoActivity::class.java)
+                            // Vai para o pagamento
                             startActivity(intent)
                             finish()
                         }

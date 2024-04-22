@@ -41,14 +41,14 @@ class PagamentoActivity : AppCompatActivity() {
         textViewInformacoesCompra = findViewById(R.id.textViewInformacoesCompra)
         textViewIdArmario = findViewById(R.id.textViewIdArmario)
 
-        textViewIdArmario.text = id
+        textViewIdArmario.text = "Id do Armario:"+id;
         textViewInformacoesCompra.text = when (tempoSelecionado) {
             "30 Min / 30R$" -> "Tempo: 30 min        Valor: R$30"
             "1 Hora / 55R$" -> "Tempo: 1 hora        Valor: R$55"
             "2 Horas / 110R$" -> "Tempo: 2 horas        Valor: R$110"
             "4 Horas / 200 R$" -> "Tempo: 4 horas        Valor: R$200"
             "Diária / 300 R$" -> "Tempo: Diária        Valor: R$300"
-            else -> "Opção não reconhecida"
+            else -> tempoSelecionado
         }
 
         // Recebendo dados da Intent
@@ -67,6 +67,8 @@ class PagamentoActivity : AppCompatActivity() {
         }
         buttonVoltar.setOnClickListener{
             val intent = Intent(this, OpcoesActivity::class.java)
+            intent.putExtra("tempoSelecionado", tempoSelecionado)
+            intent.putExtra("id", id)
             startActivity(intent)
             finish()
         }
@@ -88,7 +90,10 @@ class PagamentoActivity : AppCompatActivity() {
                     .add(pedido)
                     .addOnSuccessListener { documentReference ->
                         Log.d(TAG, "Pedido adicionado com ID: ${documentReference.id}")
-                        Toast.makeText(this, "Cartão salvo com sucesso!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Pedido feito com sucesso!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this, PagamentoActivity::class.java)
+                        intent.putExtra("id", id)
+                        startActivity(intent)
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Erro ao adicionar pedido", e)

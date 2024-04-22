@@ -50,6 +50,7 @@ class ArmarioActivity : AppCompatActivity() {
         btnContinuar.setOnClickListener {
             // Iniciar a atividade de pagamento (CartaoActivity)
             val intent = Intent(this, OpcoesActivity::class.java)
+            intent.putExtra("id", id)
             startActivity(intent)
         }
 
