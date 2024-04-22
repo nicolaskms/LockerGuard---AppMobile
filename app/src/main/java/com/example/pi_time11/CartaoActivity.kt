@@ -1,6 +1,5 @@
 package com.example.pi_time11
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,13 +23,13 @@ class CartaoActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cartao)
 
         val tempoSelecionado = intent.getStringExtra("tempoSelecionado")
         val id = intent.getStringExtra("id")
+        val localizacao = intent.getStringExtra("localizacao")
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -48,6 +47,7 @@ class CartaoActivity : AppCompatActivity() {
             val intent = Intent(this, PagamentoActivity::class.java)
             intent.putExtra("tempoSelecionado", tempoSelecionado)
             intent.putExtra("id", id)
+            intent.putExtra("localizacao",localizacao)
             startActivity(intent)
             finish()
         }
@@ -86,10 +86,13 @@ class CartaoActivity : AppCompatActivity() {
                     cartoesRef.add(novoCartao)
                         .addOnSuccessListener { documentReference ->
                             Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-
                             // Exibe mensagem de sucesso
                             Toast.makeText(this, "Cartão salvo com sucesso!", Toast.LENGTH_SHORT).show()
                             // Vai para o pagamento
+                            val intent = Intent(this, PagamentoActivity::class.java)
+                            intent.putExtra("tempoSelecionado", tempoSelecionado)
+                            intent.putExtra("localizacao",localizacao)
+                            intent.putExtra("id", id)
                             startActivity(intent)
                             finish()
                         }

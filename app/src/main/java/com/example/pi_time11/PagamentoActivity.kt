@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +15,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 class PagamentoActivity : AppCompatActivity() {
     private lateinit var buttonVoltar: Button
     private lateinit var buttonCadastrarCartao: Button
-    private lateinit var buttonCartaoSalvo: Button
+    private lateinit var buttonCartaoSalvo: Spinner
     private lateinit var buttonContinuar: Button
     private lateinit var textViewIdArmario: TextView
     private lateinit var textViewInformacoesCompra: TextView
+    private lateinit var textViewLoc: TextView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,7 @@ class PagamentoActivity : AppCompatActivity() {
         // Exibir as informações da compra com base no tempo selecionado
         textViewInformacoesCompra = findViewById(R.id.textViewInformacoesCompra)
         textViewIdArmario = findViewById(R.id.textViewIdArmario)
+        textViewLoc = findViewById(R.id.textViewLoc)
 
         textViewIdArmario.text = "Id do Armario:"+id;
         textViewInformacoesCompra.text = when (tempoSelecionado) {
@@ -54,14 +57,20 @@ class PagamentoActivity : AppCompatActivity() {
         // Recebendo dados da Intent
         val localizacao = intent.getStringExtra("localizacao")
 
+        textViewLoc.text = "Localização:"+localizacao
+
 
         buttonCadastrarCartao = findViewById(R.id.btn_CadastrarCartao)
         buttonVoltar = findViewById(R.id.btnVoltar)
-        buttonCartaoSalvo = findViewById(R.id.btn_CartaoSalvo)
+        buttonCartaoSalvo = findViewById(R.id.spinnerCartoesSalvos)
         buttonContinuar = findViewById(R.id.btnProsseguir)
 
         buttonCadastrarCartao.setOnClickListener {
-            val intent = Intent(this, CartaoActivity::class.java)
+            val intent = Intent(this, CartaoActivity::class.java).apply {
+                putExtra("id", id)
+                putExtra("tempoSelecionado",tempoSelecionado)
+                putExtra("localizacao", localizacao)
+            }
             startActivity(intent)
             finish()
         }
@@ -80,7 +89,15 @@ class PagamentoActivity : AppCompatActivity() {
                 // Gerar pedido no banco de dados Firestore
                 val db = FirebaseFirestore.getInstance()
                 val pedido = hashMapOf(
-                    "tempo" to tempoSelecionado,
+
+                    "tempo" to when (tempoSelecionado) {
+                        "30 Min / 30R$" -> "30 min"
+                        "1 Hora / 55R$" -> "1 hora"
+                        "2 Horas / 110R$" -> "2 horas"
+                        "4 Horas / 200 R$" -> "4 horas"
+                        "Diária / 300 R$" -> "Diária"
+                        else -> "Erro"
+                    },
                     "valor" to valorSelecionado,
                     "userId" to userId,
                     "localId" to id
@@ -91,7 +108,7 @@ class PagamentoActivity : AppCompatActivity() {
                     .addOnSuccessListener { documentReference ->
                         Log.d(TAG, "Pedido adicionado com ID: ${documentReference.id}")
                         Toast.makeText(this, "Pedido feito com sucesso!", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this, PagamentoActivity::class.java)
+                        val intent = Intent(this, MapsActivity::class.java)
                         intent.putExtra("id", id)
                         startActivity(intent)
                     }

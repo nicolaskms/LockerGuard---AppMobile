@@ -86,7 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         val id = documento.getString("id")
 
                         // Criando Intent e passando os dados com o putExtra()
-                        val intent = Intent(this, PagamentoActivity::class.java)
+                        val intent = Intent(this, ArmarioActivity::class.java)
                         intent.putExtra("localizacao", localizacao)
                         intent.putExtra("id", id)
                         startActivity(intent)

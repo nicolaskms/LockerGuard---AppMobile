@@ -31,7 +31,7 @@ class ArmarioActivity : AppCompatActivity() {
         val id = intent.getStringExtra("id")
 
         buttonVoltar = findViewById(R.id.btnVoltar)
-        btnContinuar = findViewById(R.id.btn_compra)
+        btnContinuar = findViewById(R.id.btn_Continuar)
 
         // Exibindo os dados nos TextViews
         findViewById<TextView>(R.id.valor_endereco).text = localizacao
@@ -50,6 +50,7 @@ class ArmarioActivity : AppCompatActivity() {
         btnContinuar.setOnClickListener {
             // Iniciar a atividade de pagamento (CartaoActivity)
             val intent = Intent(this, OpcoesActivity::class.java)
+            intent.putExtra("localizacao",localizacao)
             intent.putExtra("id", id)
             startActivity(intent)
         }

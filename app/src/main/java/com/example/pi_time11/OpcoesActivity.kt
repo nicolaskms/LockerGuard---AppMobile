@@ -25,17 +25,19 @@ class OpcoesActivity : AppCompatActivity() {
             finish()
         }
 
+        val id = intent.getStringExtra("id")
+        val localizacao = intent.getStringExtra("localizacao")
         buttonProsseguir.setOnClickListener {
-            val id = intent.getStringExtra("id")
             val selectedRadioButtonId = radioGroup.checkedRadioButtonId
             val radioButton = findViewById<RadioButton>(selectedRadioButtonId)
             val tempoSelecionado = radioButton?.text.toString()
-
             val intent = Intent(this, PagamentoActivity::class.java).apply {
                 putExtra("tempoSelecionado", tempoSelecionado)
+                putExtra("localizacao",localizacao)
                 putExtra("id", id)
             }
             startActivity(intent)
+            finish()
         }
     }
 }
