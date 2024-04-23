@@ -136,7 +136,7 @@ class PagamentoActivity : AppCompatActivity() {
                     .addOnSuccessListener { documentReference ->
                         Log.d(TAG, "Pedido adicionado com ID: ${documentReference.id}")
                         Toast.makeText(this, "Pedido feito com sucesso!", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this, MapsActivity::class.java)
+                        val intent = Intent(this, QrCodeActivity::class.java)
                         intent.putExtra("id", id)
                         startActivity(intent)
                     }

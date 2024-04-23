@@ -33,4 +33,7 @@
     <string name="btn_continuar">Continuar</string>]
     <string name="btn_cartaosalvo">Cartões Salvos</string>
     <string name="hint_Apelido">Apelido do Cartão</string>
+    <string name="qrcode_label">Qr Code</string>
+    <string name="idarmario_label">ID ARMARIO</string>
+    <string name="idnumber_label">123456</string>
 </resources>
