@@ -1,9 +1,9 @@
 package com.example.pi_time11
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
@@ -13,15 +13,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PagamentoActivity : AppCompatActivity() {
+
     private lateinit var buttonVoltar: Button
     private lateinit var buttonCadastrarCartao: Button
-    private lateinit var buttonCartaoSalvo: Spinner
     private lateinit var buttonContinuar: Button
     private lateinit var textViewIdArmario: TextView
     private lateinit var textViewInformacoesCompra: TextView
     private lateinit var textViewLoc: TextView
+    private lateinit var textViewApelidoCartao: TextView
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagamento)
@@ -43,8 +43,9 @@ class PagamentoActivity : AppCompatActivity() {
         textViewInformacoesCompra = findViewById(R.id.textViewInformacoesCompra)
         textViewIdArmario = findViewById(R.id.textViewIdArmario)
         textViewLoc = findViewById(R.id.textViewLoc)
+        textViewApelidoCartao = findViewById(R.id.textViewApelidoCartao)
 
-        textViewIdArmario.text = "Id do Armario:"+id;
+        textViewIdArmario.text = "Id do Armario:$id";
         textViewInformacoesCompra.text = when (tempoSelecionado) {
             "30 Min / 30R$" -> "Tempo: 30 min        Valor: R$30"
             "1 Hora / 55R$" -> "Tempo: 1 hora        Valor: R$55"
@@ -57,18 +58,46 @@ class PagamentoActivity : AppCompatActivity() {
         // Recebendo dados da Intent
         val localizacao = intent.getStringExtra("localizacao")
 
-        textViewLoc.text = "Localização:"+localizacao
+        textViewLoc.text = "Localização:$localizacao"
 
+        // Verificar se o usuário está autenticado
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            // Verificar se o usuário possui algum cartão salvo
+            db.collection("cartoes")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        // Se houver cartões salvos, exibir o apelido do cartão em um TextView
+                        val cartao = documents.documents[0]
+                        val apelido = cartao.getString("Apelido")
+                        textViewApelidoCartao.text = "Cartão cadastrado: $apelido"
+                        textViewApelidoCartao.visibility = View.VISIBLE
+                    } else {
+                        // Se não houver cartões salvos, esconder o TextView
+                        textViewApelidoCartao.visibility = View.GONE
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Erro ao buscar cartões do usuário", e)
+                    // Tratar falha na busca dos cartões
+                }
+        } else {
+            Log.d(TAG, "Usuário não autenticado")
+            // Adicione um código aqui para lidar com o usuário não autenticado, se necessário
+        }
 
         buttonCadastrarCartao = findViewById(R.id.btn_CadastrarCartao)
         buttonVoltar = findViewById(R.id.btnVoltar)
-        buttonCartaoSalvo = findViewById(R.id.spinnerCartoesSalvos)
         buttonContinuar = findViewById(R.id.btnProsseguir)
 
         buttonCadastrarCartao.setOnClickListener {
             val intent = Intent(this, CartaoActivity::class.java).apply {
                 putExtra("id", id)
-                putExtra("tempoSelecionado",tempoSelecionado)
+                putExtra("tempoSelecionado", tempoSelecionado)
                 putExtra("localizacao", localizacao)
             }
             startActivity(intent)
@@ -89,7 +118,6 @@ class PagamentoActivity : AppCompatActivity() {
                 // Gerar pedido no banco de dados Firestore
                 val db = FirebaseFirestore.getInstance()
                 val pedido = hashMapOf(
-
                     "tempo" to when (tempoSelecionado) {
                         "30 Min / 30R$" -> "30 min"
                         "1 Hora / 55R$" -> "1 hora"
@@ -120,10 +148,6 @@ class PagamentoActivity : AppCompatActivity() {
                 // Adicione um código aqui para lidar com o usuário não autenticado, se necessário
             }
         }
-
-
-        // Exibir informações da compra
-        val resumoCompra = "Tempo: $tempoSelecionado"
     }
 
     companion object {
