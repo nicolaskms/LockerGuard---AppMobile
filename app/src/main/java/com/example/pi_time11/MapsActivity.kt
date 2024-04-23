@@ -34,7 +34,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        buttonCadastrarCartao = findViewById(R.id.buttonCadastrarCartao)
         buttonSair = findViewById(R.id.buttonSair)
 
         auth = Firebase.auth
@@ -42,12 +41,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         buttonSair.setOnClickListener {
             auth.signOut()
             val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        buttonCadastrarCartao.setOnClickListener {
-            val intent = Intent(this, CartaoActivity::class.java)
             startActivity(intent)
             finish()
         }

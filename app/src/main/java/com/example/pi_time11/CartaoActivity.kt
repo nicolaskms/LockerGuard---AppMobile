@@ -1,10 +1,7 @@
 package com.example.pi_time11
 
-import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
@@ -23,15 +20,16 @@ class CartaoActivity : AppCompatActivity() {
     private lateinit var etCPF: TextInputLayout
     private lateinit var etApelido: TextInputLayout
 
-
-    private var db = FirebaseFirestore.getInstance()
-
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cartao)
+
+        val tempoSelecionado = intent.getStringExtra("tempoSelecionado")
+        val id = intent.getStringExtra("id")
+        val localizacao = intent.getStringExtra("localizacao")
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -46,13 +44,17 @@ class CartaoActivity : AppCompatActivity() {
         etApelido = findViewById(R.id.etApelido)
 
         btnVoltar.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, PagamentoActivity::class.java)
+            intent.putExtra("tempoSelecionado", tempoSelecionado)
+            intent.putExtra("id", id)
+            intent.putExtra("localizacao",localizacao)
             startActivity(intent)
             finish()
         }
 
         btnCadastrar.setOnClickListener {
-
+            intent.putExtra("tempoSelecionado", tempoSelecionado)
+            intent.putExtra("id", id)
             val sCard = etCard.editText?.text.toString()
             val sCvv = etCvv.editText?.text.toString()
             val sDataval = etDataval.editText?.text.toString()
@@ -62,35 +64,55 @@ class CartaoActivity : AppCompatActivity() {
             if (sCard.isNotEmpty() && sCvv.isNotEmpty() && sDataval.isNotEmpty() &&
                 sCPF.isNotEmpty() && sApelido.isNotEmpty()) {
 
-                // Cria um novo cartão
-                val cartao = hashMapOf(
-                    "card" to sCard,
-                    "cvv" to sCvv,
-                    "dataval" to sDataval,
-                    "cpf" to sCPF,
-                    "Apelido" to sApelido
+                // Obtém o ID do usuário atualmente autenticado
+                val userId = auth.currentUser?.uid
 
-                )
+                // Verifica se o usuário está autenticado
+                if (userId != null) {
+                    // Referência para a coleção "cartoes" no Firestore
+                    val cartoesRef = db.collection("cartoes")
 
-                // Adiciona os dados do cartão ao Firestore
-                db.collection("cartoes")
-                    .add(cartao)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    // Cria um novo documento para o cartão
+                    val novoCartao = hashMapOf(
+                        "userId" to userId,
+                        "card" to sCard,
+                        "cvv" to sCvv,
+                        "dataval" to sDataval,
+                        "cpf" to sCPF,
+                        "Apelido" to sApelido
+                    )
 
-                        // Navega para a próxima tela após o cadastro
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }
+                    // Adiciona os dados do cartão ao Firestore
+                    cartoesRef.add(novoCartao)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                            // Exibe mensagem de sucesso
+                            Toast.makeText(this, "Cartão salvo com sucesso!", Toast.LENGTH_SHORT).show()
+                            // Vai para o pagamento
+                            val intent = Intent(this, PagamentoActivity::class.java)
+                            intent.putExtra("tempoSelecionado", tempoSelecionado)
+                            intent.putExtra("localizacao",localizacao)
+                            intent.putExtra("id", id)
+                            startActivity(intent)
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(TAG, "Error adding document", e)
+                            Toast.makeText(this, "Erro ao salvar o cartão. Por favor, tente novamente.", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Log.d(TAG, "Usuário não autenticado.")
+                    Toast.makeText(this, "Usuário não autenticado.", Toast.LENGTH_SHORT).show()
+                }
 
             } else {
                 // Exibe mensagem se algum campo estiver vazio
                 Toast.makeText(baseContext, "Por favor, preencha os requisitos de todos os campos!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "CartaoActivity"
     }
 }
