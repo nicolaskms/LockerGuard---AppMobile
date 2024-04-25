@@ -26,7 +26,7 @@ class QrCodeActivity : AppCompatActivity() {
 
         // Exibindo o ID do armário no TextView
         armarioId?.let {
-            armarioIdTextView.text = it
+            armarioIdTextView.text = armarioId
         }
 
         // Ação do botão "Voltar"

@@ -125,29 +125,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     // Abre a tela do armário apenas se a distância for menor ou igual a 1km (1000 metros)
                     if (distanciaParaArmario <= 1000) { // Distância limite em metros
                         val db = FirebaseFirestore.getInstance()
-                        val armariosRef = db.collection("armarios")
+                        val pedidosRef = db.collection("pedidos")
 
-                        // Consulta para buscar os dados do armário com o ID correspondente
+                        // Consulta para buscar o pedido do usuário para o armário
+                        val usuarioId = auth.currentUser?.uid
                         val armarioId = if (marker.title == "LockerGuard - Jundiaí") "011" else "012"
-                        armariosRef.whereEqualTo("id", armarioId)
+
+                        pedidosRef.whereEqualTo("userId", usuarioId)
+                            .whereEqualTo("localId", armarioId)
                             .get()
                             .addOnSuccessListener { documents ->
                                 if (!documents.isEmpty) {
-                                    val documento = documents.first()
-                                    val localizacao = documento.getString("localizacao")
-                                    val id = documento.getString("id")
-
-                                    // Criando Intent e passando os dados com o putExtra()
-                                    val intent = Intent(this, ArmarioActivity::class.java)
-                                    intent.putExtra("localizacao", localizacao)
-                                    intent.putExtra("id", id)
+                                    // Se existir um pedido, redireciona para a tela de QrCodeActivity
+                                    val intent = Intent(this, QrCodeActivity::class.java)
+                                    intent.putExtra("id", armarioId)
                                     startActivity(intent)
                                 } else {
-                                    Toast.makeText(
-                                        baseContext,
-                                        "Nenhum documento encontrado com o ID '$armarioId'.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    // Se não houver pedido, redireciona para a tela de detalhes do armário
+                                    abrirDetalhesArmario(armarioId)
                                 }
                             }
                             .addOnFailureListener { exception ->
@@ -170,6 +165,41 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             return true
         }
         return false
+    }
+
+    private fun abrirDetalhesArmario(armarioId: String) {
+        val db = FirebaseFirestore.getInstance()
+        val armariosRef = db.collection("armarios")
+
+        armariosRef.whereEqualTo("id", armarioId)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val documento = documents.first()
+                    val localizacao = documento.getString("localizacao")
+                    val id = documento.getString("id")
+
+                    // Criando Intent e passando os dados com o putExtra()
+                    val intent = Intent(this, ArmarioActivity::class.java)
+                    intent.putExtra("localizacao", localizacao)
+                    intent.putExtra("id", id)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        baseContext,
+                        "Nenhum documento encontrado com o ID '$armarioId'.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Erro ao buscar dados do Firestore: ", exception)
+                Toast.makeText(
+                    baseContext,
+                    "Erro ao buscar dados do Firestore.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
     private fun calcularDistancia(segunda: LatLng, userLocation: Location): Float {

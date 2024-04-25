@@ -36,4 +36,5 @@
     <string name="qrcode_label">Qr Code</string>
     <string name="idarmario_label">ID ARMARIO</string>
     <string name="idnumber_label">123456</string>
+    <string name="aviso">Mostre esse QR Code ao gerente para receber o pin.</string>
 </resources>

@@ -58,5 +58,16 @@
         android:gravity="center"
         android:padding="5dp"
         android:textColor="#000000"/>
+    <TextView
+        android:id="@+id/aviso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/aviso"
+        android:textColorHint="@color/Red"
+        android:textSize="20sp"
+        android:layout_marginBottom="60dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textColor="#000000"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

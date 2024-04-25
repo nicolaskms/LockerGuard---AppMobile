@@ -91,24 +91,45 @@ class PagamentoActivity : AppCompatActivity() {
         buttonVoltar = findViewById(R.id.btnVoltar)
         buttonContinuar = findViewById(R.id.btnProsseguir)
 
-        buttonCadastrarCartao.setOnClickListener {
-            val firebaseAuth = FirebaseAuth.getInstance()
-            val usuarioAtual = firebaseAuth.currentUser
+            buttonCadastrarCartao.setOnClickListener {
+                val firebaseAuth = FirebaseAuth.getInstance()
+                val usuarioAtual = firebaseAuth.currentUser
 
-            if (usuarioAtual != null && usuarioAtual.isEmailVerified) {
-                // Se o usuário estiver logado e o email estiver verificado, iniciar a próxima atividade
-                val intent = Intent(this, CartaoActivity::class.java).apply {
-                    putExtra("id", id)
-                    putExtra("tempoSelecionado", tempoSelecionado)
-                    putExtra("localizacao", localizacao)
+                if (usuarioAtual != null && usuarioAtual.isEmailVerified) {
+                    val db = FirebaseFirestore.getInstance()
+                    val userId = usuarioAtual.uid
+
+                    // Excluir todos os cartões salvos do usuário atual
+                    db.collection("cartoes")
+                        .whereEqualTo("userId", userId)
+                        .get()
+                        .addOnSuccessListener { documents ->
+                            for (document in documents) {
+                                document.reference.delete()
+                                    .addOnSuccessListener {
+                                        Log.d(TAG, "Cartão excluído com sucesso")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.e(TAG, "Erro ao excluir cartão", e)
+                                    }
+                            }
+                            val intent = Intent(this, CartaoActivity::class.java).apply {
+                                putExtra("id", id)
+                                putExtra("tempoSelecionado", tempoSelecionado)
+                                putExtra("localizacao", localizacao)
+                            }
+                            startActivity(intent)
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e(TAG, "Erro ao buscar cartões do usuário", e)
+                            Toast.makeText(this, "Erro ao buscar cartões do usuário", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    // Se o usuário não estiver logado ou o email não estiver verificado, exibir uma mensagem
+                    Toast.makeText(this, "Faça login e verifique seu e-mail para continuar", Toast.LENGTH_SHORT).show()
                 }
-                startActivity(intent)
-                finish()
-            } else {
-                // Se o usuário não estiver logado ou o email não estiver verificado, exibir uma mensagem
-                Toast.makeText(this, "Faça login e verifique seu e-mail para continuar", Toast.LENGTH_SHORT).show()
             }
-        }
 
         buttonVoltar.setOnClickListener{
             val intent = Intent(this, OpcoesActivity::class.java)
