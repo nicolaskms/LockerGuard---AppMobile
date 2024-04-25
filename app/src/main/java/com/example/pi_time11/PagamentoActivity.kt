@@ -76,9 +76,6 @@ class PagamentoActivity : AppCompatActivity() {
                         val apelido = cartao.getString("Apelido")
                         textViewApelidoCartao.text = "Cartão cadastrado: $apelido"
                         textViewApelidoCartao.visibility = View.VISIBLE
-                    } else {
-                        // Se não houver cartões salvos, esconder o TextView
-                        textViewApelidoCartao.visibility = View.GONE
                     }
                 }
                 .addOnFailureListener { e ->
@@ -95,14 +92,24 @@ class PagamentoActivity : AppCompatActivity() {
         buttonContinuar = findViewById(R.id.btnProsseguir)
 
         buttonCadastrarCartao.setOnClickListener {
-            val intent = Intent(this, CartaoActivity::class.java).apply {
-                putExtra("id", id)
-                putExtra("tempoSelecionado", tempoSelecionado)
-                putExtra("localizacao", localizacao)
+            val firebaseAuth = FirebaseAuth.getInstance()
+            val usuarioAtual = firebaseAuth.currentUser
+
+            if (usuarioAtual != null && usuarioAtual.isEmailVerified) {
+                // Se o usuário estiver logado e o email estiver verificado, iniciar a próxima atividade
+                val intent = Intent(this, CartaoActivity::class.java).apply {
+                    putExtra("id", id)
+                    putExtra("tempoSelecionado", tempoSelecionado)
+                    putExtra("localizacao", localizacao)
+                }
+                startActivity(intent)
+                finish()
+            } else {
+                // Se o usuário não estiver logado ou o email não estiver verificado, exibir uma mensagem
+                Toast.makeText(this, "Faça login e verifique seu e-mail para continuar", Toast.LENGTH_SHORT).show()
             }
-            startActivity(intent)
-            finish()
         }
+
         buttonVoltar.setOnClickListener{
             val intent = Intent(this, OpcoesActivity::class.java)
             intent.putExtra("tempoSelecionado", tempoSelecionado)

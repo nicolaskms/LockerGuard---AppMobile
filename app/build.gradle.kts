@@ -39,6 +39,8 @@ android {
 
 dependencies {
 
+    implementation ("com.google.android.gms:play-services-location:19.0.1")
+
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
