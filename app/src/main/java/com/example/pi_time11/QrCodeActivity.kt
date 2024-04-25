@@ -1,5 +1,6 @@
 package com.example.pi_time11
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
@@ -30,6 +31,8 @@ class QrCodeActivity : AppCompatActivity() {
 
         // Ação do botão "Voltar"
         buttonVoltar.setOnClickListener {
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
             finish()
         }
 

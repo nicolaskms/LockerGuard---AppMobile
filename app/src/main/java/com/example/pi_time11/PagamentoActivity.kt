@@ -75,10 +75,6 @@ class PagamentoActivity : AppCompatActivity() {
                         val cartao = documents.documents[0]
                         val apelido = cartao.getString("Apelido")
                         textViewApelidoCartao.text = "Cartão cadastrado: $apelido"
-                        textViewApelidoCartao.visibility = View.VISIBLE
-                    } else {
-                        // Se não houver cartões salvos, esconder o TextView
-                        textViewApelidoCartao.visibility = View.GONE
                     }
                 }
                 .addOnFailureListener { e ->
