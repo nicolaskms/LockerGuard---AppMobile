@@ -9,7 +9,9 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
@@ -24,11 +26,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Calendar
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var buttonCadastrarCartao: Button
+    private lateinit var textaviso:TextView
     private lateinit var buttonSair: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
@@ -40,11 +44,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         buttonSair = findViewById(R.id.buttonSair)
-
+        buttonCadastrarCartao = findViewById(R.id.btn_CadastrarCartao)
+        textaviso = findViewById(R.id.TextViewMaps)
         auth = Firebase.auth
 
         buttonSair.setOnClickListener {
@@ -52,6 +55,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
+        }
+        buttonCadastrarCartao.setOnClickListener {
+            val tela = "1"
+            val intent = Intent(this, CartaoActivity::class.java)
+            intent.putExtra("tela",tela)
+            startActivity(intent)
+            finish()
+        }
+        val user = FirebaseAuth.getInstance().currentUser?.uid
+        if (user == null){
+            buttonCadastrarCartao.visibility = View.GONE
+            textaviso.text = "Crie uma conta ou faça login para alugar um armário!"
         }
     }
 
@@ -149,7 +164,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                 Log.w(TAG, "Erro ao buscar dados do Firestore: ", exception)
                                 Toast.makeText(
                                     baseContext,
-                                    "Erro ao buscar dados do Firestore.",
+                                    "Faça login para alugar um armário",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }

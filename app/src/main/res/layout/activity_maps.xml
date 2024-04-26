@@ -10,12 +10,31 @@
 
     <fragment
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="700dp"
         tools:ignore="FragmentTagUsage"
         android:id="@+id/map"
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
-
+    <TextView
+        android:id="@+id/TextViewMaps"
+        android:textAllCaps="false"
+        android:layout_width="200dp"
+        android:text="@string/maps"
+        android:textSize="15dp"
+        android:textAlignment="center"
+        android:textColor="@color/Red"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"/>
+    <Button
+        android:id="@+id/btn_CadastrarCartao"
+        android:textAllCaps="false"
+        android:layout_width="130dp"
+        android:hint="@string/btn_cadastrar_card"
+        android:textColorHint="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"/>
     <Button
         android:id="@+id/buttonSair"
         android:textAllCaps="false"
@@ -24,7 +43,7 @@
         android:textColorHint="@color/white"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="38dp"/>
+        android:layout_marginTop="16dp"/>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

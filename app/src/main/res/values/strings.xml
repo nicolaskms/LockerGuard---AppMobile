@@ -29,7 +29,7 @@
     <string name="btn_cadastrar_card">Cadastrar Cartão</string>
     <string name="id_armario">ID Armario</string>
     <string name="endereco">Endereço</string>
-    <string name="opcoes">Opções</string>
+    <string name="opcoes">Opções de locação</string>
     <string name="btn_continuar">Continuar</string>]
     <string name="btn_cartaosalvo">Cartões Salvos</string>
     <string name="hint_Apelido">Apelido do Cartão</string>
@@ -37,4 +37,6 @@
     <string name="idarmario_label">ID ARMARIO</string>
     <string name="idnumber_label">123456</string>
     <string name="aviso">Mostre esse QR Code ao gerente para receber o pin.</string>
+    <string name="pagamento">Confirmar Locação</string>
+    <string name="maps">Escolha um armário no mapa.</string>
 </resources>

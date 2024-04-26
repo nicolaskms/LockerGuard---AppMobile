@@ -76,6 +76,7 @@ class PagamentoActivity : AppCompatActivity() {
                         val apelido = cartao.getString("Apelido")
                         textViewApelidoCartao.text = "Cartão cadastrado: $apelido"
                         textViewApelidoCartao.visibility = View.VISIBLE
+                        buttonCadastrarCartao.text = "Alterar Cartão"
                     }
                 }
                 .addOnFailureListener { e ->
@@ -96,35 +97,16 @@ class PagamentoActivity : AppCompatActivity() {
                 val usuarioAtual = firebaseAuth.currentUser
 
                 if (usuarioAtual != null && usuarioAtual.isEmailVerified) {
-                    val db = FirebaseFirestore.getInstance()
-                    val userId = usuarioAtual.uid
-
-                    // Excluir todos os cartões salvos do usuário atual
-                    db.collection("cartoes")
-                        .whereEqualTo("userId", userId)
-                        .get()
-                        .addOnSuccessListener { documents ->
-                            for (document in documents) {
-                                document.reference.delete()
-                                    .addOnSuccessListener {
-                                        Log.d(TAG, "Cartão excluído com sucesso")
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.e(TAG, "Erro ao excluir cartão", e)
-                                    }
-                            }
+                    val tela = "2"
                             val intent = Intent(this, CartaoActivity::class.java).apply {
                                 putExtra("id", id)
                                 putExtra("tempoSelecionado", tempoSelecionado)
                                 putExtra("localizacao", localizacao)
+                                putExtra("tela",tela)
                             }
                             startActivity(intent)
                             finish()
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e(TAG, "Erro ao buscar cartões do usuário", e)
-                            Toast.makeText(this, "Erro ao buscar cartões do usuário", Toast.LENGTH_SHORT).show()
-                        }
+
                 } else {
                     // Se o usuário não estiver logado ou o email não estiver verificado, exibir uma mensagem
                     Toast.makeText(this, "Faça login e verifique seu e-mail para continuar", Toast.LENGTH_SHORT).show()
@@ -133,6 +115,7 @@ class PagamentoActivity : AppCompatActivity() {
 
         buttonVoltar.setOnClickListener{
             val intent = Intent(this, OpcoesActivity::class.java)
+            intent.putExtra("localizacao",localizacao)
             intent.putExtra("tempoSelecionado", tempoSelecionado)
             intent.putExtra("id", id)
             startActivity(intent)
@@ -158,7 +141,6 @@ class PagamentoActivity : AppCompatActivity() {
                     "userId" to userId,
                     "localId" to id
                 )
-
                 db.collection("pedidos")
                     .add(pedido)
                     .addOnSuccessListener { documentReference ->
@@ -176,9 +158,36 @@ class PagamentoActivity : AppCompatActivity() {
                 // Adicione um código aqui para lidar com o usuário não autenticado, se necessário
             }
         }
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            // Verificar se o usuário possui algum cartão salvo
+            db.collection("cartoes")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        // Se houver cartões salvos, exibir o apelido do cartão na text
+                        val cartao = documents.documents[0]
+                        val apelido = cartao.getString("Apelido")
+                        textViewApelidoCartao.text = "Cartão cadastrado: $apelido"
+                        textViewApelidoCartao.visibility = View.VISIBLE
+                        buttonCadastrarCartao.text = "Alterar Cartão"
+                        buttonContinuar.isEnabled = true // Habilitar o botão de locação
+                    } else {
+                        // Nenhum cartão cadastrado, desabilitar o botão de locação
+                        buttonContinuar.isEnabled = false
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Erro ao buscar cartões do usuário", e)
+                }
+        } else {
+            Log.d(TAG, "Usuário não autenticado")
+            Toast.makeText(this, "Faça login para alugar um armário.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     companion object {
-        private const val TAG = "ArmarioActivity"
+        const val TAG = "ArmarioActivity"
     }
 }
