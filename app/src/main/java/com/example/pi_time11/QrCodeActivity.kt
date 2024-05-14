@@ -38,11 +38,15 @@ class QrCodeActivity : AppCompatActivity() {
             armarioIdTextView.text = armarioId
         }
 
-        // Gerar e exibir o QR code com o ID do armário
-        armarioId?.let {
-            val bitmap = generateQRCode(it)
-            qrCodeImageView.setImageBitmap(bitmap)
-        }
+        val nomeDoGerente = "Gerente_Teste"
+        val tempoSelecionado = intent.getStringExtra("tempoSelecionado") ?: "Null"
+        val localizacao = intent.getStringExtra("localizacao") ?: "Null"
+
+        val qrCodeData = "$armarioId;$nomeDoGerente;$localizacao;$tempoSelecionado"
+
+        // Gerar e exibir o QR code
+        val bitmap = generateQRCode(qrCodeData)
+        qrCodeImageView.setImageBitmap(bitmap)
 
         // Ação do botão "Voltar"
         buttonVoltar.setOnClickListener {
@@ -72,7 +76,7 @@ class QrCodeActivity : AppCompatActivity() {
     private fun generateQRCode(text: String): Bitmap? {
         val multiFormatWriter = MultiFormatWriter()
         return try {
-            val bitMatrix: BitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 500, 500)
+            val bitMatrix: BitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 800, 800)
             val barcodeEncoder = BarcodeEncoder()
             barcodeEncoder.createBitmap(bitMatrix)
         } catch (e: WriterException) {
