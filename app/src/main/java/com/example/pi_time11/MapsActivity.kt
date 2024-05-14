@@ -74,6 +74,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mMap = googleMap
         mMap.setOnMarkerClickListener(this)
 
+        /*val googleplex = LatLng(37.42205491527951, -122.08611094231884)
+        mMap.addMarker(
+            MarkerOptions()
+                .position(googleplex)
+                .title("LockerGuard - Teste")
+                .snippet("GooglePlex - San Juan")
+        )*/
         // Adiciona marcadores
         val jundiai = LatLng(-23.184810613775756, -46.97102255357517)
         mMap.addMarker(
@@ -138,7 +145,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     // Calcula a distância entre a localização do usuário e o marcador do armário
                     val distanciaParaArmario = calcularDistancia(marker.position, userLocation)
                     // Abre a tela do armário apenas se a distância for menor ou igual a 1km (1000 metros)
-                    if (distanciaParaArmario <= 1000) { // Distância limite em metros
+                    if (distanciaParaArmario <= 1000000000000) { // Distância limite em metros -> Henrique( mudei a distancia para teste )
                         val db = FirebaseFirestore.getInstance()
                         val pedidosRef = db.collection("pedidos")
 
