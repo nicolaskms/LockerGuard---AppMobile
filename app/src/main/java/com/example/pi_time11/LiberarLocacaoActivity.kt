@@ -27,22 +27,18 @@ import com.journeyapps.barcodescanner.ScanContract
 
 class LiberarLocacaoActivity : AppCompatActivity() {
 
-    private lateinit var resultado: TextView
-    private lateinit var btnVoltar: Button
 
+    private lateinit var btnVoltar: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liberar_locacao)
 
-        resultado = findViewById(R.id.resultado_qrcode) /// TODO: TESTE DO RESULTADO QRCODE REMOVER
         btnVoltar = findViewById(R.id.btnVoltar)
-
         btnVoltar.setOnClickListener{  /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
             val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
             finish()
         }
-
         CheckCameraPermissions(this)
     }
 
@@ -81,9 +77,6 @@ class LiberarLocacaoActivity : AppCompatActivity() {
             // Chama a função para verificação de disponibilidade
             verificarDisponibilidadeArmario(armarioId) /// TODO: ARRUMAR O ERRO DE ACESS_DENIED DO FIREBASE
 
-            // teste para ver resultado do qrcode
-            resultado.text = armarioId
-
         } else {
             // Caso não encontre o separador esperado, loga um erro ou mostra uma mensagem
             Log.e(TAG, "Formato do QR Code não esperado: $result")
@@ -121,6 +114,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                 val isDisponivel = document.getBoolean("disponivel") ?: false
                 if (isDisponivel) {
                     // Armário disponível
+                    Toast.makeText(this, "Armário Disponivel", Toast.LENGTH_SHORT).show()
                     liberarArmario(armarioId) // se estava disponivel agora não esta mais -> false
                 } else {
                     // Armário não disponível
