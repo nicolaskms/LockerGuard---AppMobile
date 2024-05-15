@@ -27,14 +27,15 @@ import com.journeyapps.barcodescanner.ScanContract
 
 class LiberarLocacaoActivity : AppCompatActivity() {
 
+
     private lateinit var btnVoltar: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liberar_locacao)
 
         btnVoltar = findViewById(R.id.btnVoltar)
-        btnVoltar.setOnClickListener{
-            val intent = Intent(this, MapsActivity::class.java) /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
+        btnVoltar.setOnClickListener{  /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
+            val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -142,5 +143,6 @@ class LiberarLocacaoActivity : AppCompatActivity() {
     }
     companion object {
         private const val TAG = "LiberarLocacaoActivity"
+        private const val CAMERA_PERMISSION_REQUEST = 123
     }
 }
