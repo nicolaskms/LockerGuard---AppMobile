@@ -138,7 +138,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     // Calcula a distância entre a localização do usuário e o marcador do armário
                     val distanciaParaArmario = calcularDistancia(marker.position, userLocation)
                     // Abre a tela do armário apenas se a distância for menor ou igual a 1km (1000 metros)
-                    if (distanciaParaArmario <= 1000) { // Distância limite em metros
+                    if (distanciaParaArmario <= 1000000000000) { // Distância limite em metros -> Henrique( mudei a distancia para teste )
                         val db = FirebaseFirestore.getInstance()
                         val pedidosRef = db.collection("pedidos")
 
@@ -153,7 +153,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                 if (!documents.isEmpty) {
                                     // Se existir um pedido, redireciona para a tela de QrCodeActivity
                                     val intent = Intent(this, QrCodeActivity::class.java)
+
+                                    val documento = documents.first()
+                                    val localizacao = documento.getString("localId")
+                                    val tempo = documento.getString("tempo")
+
                                     intent.putExtra("id", armarioId)
+                                    intent.putExtra("localizacao", localizacao)
+                                    intent.putExtra("tempoSelecionado", tempo)
+
                                     startActivity(intent)
                                 } else {
                                     // Se não houver pedido, redireciona para a tela de detalhes do armário
@@ -190,14 +198,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
+
                     val documento = documents.first()
-                    val localizacao = documento.getString("localizacao")
-                    val id = documento.getString("id")
+                    val localizacao = documento.getString("localId")
+                    val tempo = documento.getString("tempo")
 
                     // Criando Intent e passando os dados com o putExtra()
                     val intent = Intent(this, ArmarioActivity::class.java)
+
+                    intent.putExtra("id", armarioId)
                     intent.putExtra("localizacao", localizacao)
-                    intent.putExtra("id", id)
+                    intent.putExtra("tempoSelecionado", tempo)
+
                     startActivity(intent)
                 } else {
                     Toast.makeText(

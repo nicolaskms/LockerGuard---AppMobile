@@ -29,12 +29,14 @@
         android:textStyle="bold" />
 
     <ImageView
+        android:id="@+id/imageViewQRCode"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
         android:layout_marginBottom="50dp"
-        android:src="@drawable/qr_img"
-        android:contentDescription="@string/qrcode_label"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/Qrcode_Texto"
         />
 
     <TextView
@@ -42,12 +44,11 @@
         android:layout_height="wrap_content"
         android:text="@string/idarmario_label"
         android:textSize="24sp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="-20dp"
         android:layout_marginBottom="5dp"
         android:gravity="center"
         android:padding="16dp"
         android:textColor="#000000"/>
-
     <TextView
         android:id="@+id/armario_id"
         android:layout_width="match_parent"
@@ -63,9 +64,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/aviso"
-        android:textColorHint="@color/Red"
+        android:color="@color/Red"
         android:textSize="20sp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="1dp"
         android:gravity="center"
         android:padding="5dp"
         android:textColor="#000000"/>
