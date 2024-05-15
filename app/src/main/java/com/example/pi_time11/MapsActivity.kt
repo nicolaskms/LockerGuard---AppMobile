@@ -34,6 +34,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var buttonCadastrarCartao: Button
     private lateinit var textaviso:TextView
     private lateinit var buttonSair: Button
+    private lateinit var buttonScanner: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
 
@@ -46,6 +47,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         buttonSair = findViewById(R.id.buttonSair)
+        buttonScanner = findViewById(R.id.btn_Scanear)
         buttonCadastrarCartao = findViewById(R.id.btn_CadastrarCartao)
         textaviso = findViewById(R.id.TextViewMaps)
         auth = Firebase.auth
@@ -56,6 +58,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             startActivity(intent)
             finish()
         }
+
+        buttonScanner.setOnClickListener {
+            val intent = Intent(this, LiberarLocacaoActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         buttonCadastrarCartao.setOnClickListener {
             val tela = "1"
             val intent = Intent(this, CartaoActivity::class.java)
@@ -145,7 +154,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         // Consulta para buscar o pedido do usuário para o armário
                         val usuarioId = auth.currentUser?.uid
                         val armarioId = if (marker.title == "LockerGuard - Jundiaí") "011" else "012"
-
+                        val localizacao = if (marker.title == "LockerGuard - Jundiaí") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
                         pedidosRef.whereEqualTo("userId", usuarioId)
                             .whereEqualTo("localId", armarioId)
                             .get()
@@ -155,7 +164,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                     val intent = Intent(this, QrCodeActivity::class.java)
 
                                     val documento = documents.first()
-                                    val localizacao = documento.getString("localId")
                                     val tempo = documento.getString("tempo")
 
                                     intent.putExtra("id", armarioId)
@@ -200,9 +208,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (!documents.isEmpty) {
 
                     val documento = documents.first()
-                    val localizacao = documento.getString("localId")
                     val tempo = documento.getString("tempo")
-
+                    val localizacao = if (armarioId == "011") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
                     // Criando Intent e passando os dados com o putExtra()
                     val intent = Intent(this, ArmarioActivity::class.java)
 

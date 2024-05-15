@@ -1,10 +1,16 @@
 package com.example.pi_time11
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,83 +22,95 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView.TorchListener
 import com.journeyapps.barcodescanner.camera.CameraSettings
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.google.firebase.firestore.FirebaseFirestore
+import com.journeyapps.barcodescanner.ScanOptions
+import com.journeyapps.barcodescanner.ScanContract
 
-class LiberarLocacaoActivity : AppCompatActivity(), DecoratedBarcodeView.TorchListener {
-    private lateinit var barcodeView: DecoratedBarcodeView
-    private lateinit var beepManager: BeepManager
-    private var lastText: String? = null
-    private var isTorchOn = false
+class LiberarLocacaoActivity : AppCompatActivity() {
+
+    private lateinit var resultado: TextView
+    private lateinit var btnVoltar: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liberar_locacao)
 
-        // Inicializa a view do scanner
-        barcodeView = findViewById(R.id.barcode_scanner)
-        barcodeView.setTorchListener(this)
+        resultado = findViewById(R.id.resultado_qrcode) // Inicializando o TextView aqui
+        btnVoltar = findViewById(R.id.btnVoltar)
 
-        // Inicializa o gerenciador de beep
-        beepManager = BeepManager(this)
-
-        // Verifica e solicita permissão para usar a câmera
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST)
-        } else {
-            // se for permitido inicia o scanner
-            barcodeView.resume()
+        btnVoltar.setOnClickListener{
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
-        // Configura as configurações da câmera
-        val cameraSettings = CameraSettings()
-        barcodeView.cameraSettings = cameraSettings
+        CheckCameraPermissions(this)
+    }
 
-        // Define o listener de resultados de digitalização
-        barcodeView.decodeSingle { result: BarcodeResult? ->
-            result?.let {
-                onBarcodeScanned(it.result)
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()){
+            isGranted: Boolean ->
+            if (isGranted){
+                showCamera()
+            }
+            else{
+                Toast.makeText(this, "Sem permissão", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        barcodeView.resume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        barcodeView.pause()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permissão concedida, inicia o scanner
-                barcodeView.resume()
-            } else {
-                // Permissão negada, exibe uma mensagem de erro
-                Toast.makeText(this, "Permissão de câmera negada", Toast.LENGTH_SHORT).show()
+    private val scanLauncher =
+        registerForActivityResult(ScanContract()) { result ->
+            run {
+                if (result.contents == null) {
+                    Toast.makeText(this, "Cancelado", Toast.LENGTH_SHORT).show()
+                } else {
+                    setResult(result.contents)
+                }
             }
         }
-    }
+    private fun setResult(result: String){
+        // Imprime o resultado completo para verificação
+        Log.d(TAG, "Resultado completo do QR Code: $result")
 
-    private fun onBarcodeScanned(result: Result) {
-        val fullResult = result.text
-        if (fullResult != lastText) {
-            lastText = fullResult
+        // Verifica se o resultado contém o separador esperado
+        if (result.contains(";")) {
+            // Divide a string do QR Code e pega a primeira parte (ID do armário)
+            val armarioId = result.split(";")[0]
 
-            // Divide a string do QR Code e pega a primeira parte (ID do armário) nao tem necessidade do resto das infos
-            val armarioId = fullResult.split(";")[0]
-
-            // Log para verificar o resultado
+            // Log para verificar o ID do armário
             Log.d(TAG, "ID do Armário: $armarioId")
 
-            // Chama a função para verificao de disponibilidade
+            // Chama a função para verificação de disponibilidade
             verificarDisponibilidadeArmario(armarioId)
 
-            // Beep e vibração ao escanear o QR Code
-            beepManager.playBeepSoundAndVibrate()
+            // teste para ver resultado do qrcode
+            resultado.text = armarioId
+
+        } else {
+            // Caso não encontre o separador esperado, loga um erro ou mostra uma mensagem
+            Log.e(TAG, "Formato do QR Code não esperado: $result")
+            Toast.makeText(this, "Formato do QR Code inválido.", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun showCamera() {
+        val options = ScanOptions()
+        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+        options.setBarcodeImageEnabled(true)
+        options.setPrompt("QRCode Scanner")
+        options.setCameraId(0)
+        options.setOrientationLocked(false)
+
+        scanLauncher.launch(options)
+    }
+    private fun CheckCameraPermissions(context: Context)
+    {
+        if (ContextCompat.checkSelfPermission(context,android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                showCamera()
+        }
+        else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA))
+        {
+            Toast.makeText(this, "Permissão para utilizar a camera é necessario", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
         }
     }
 
@@ -129,15 +147,6 @@ class LiberarLocacaoActivity : AppCompatActivity(), DecoratedBarcodeView.TorchLi
                 Log.w("Firestore", "Erro ao liberar o armário $armarioId", e)
             }
     }
-
-    override fun onTorchOn() {
-        isTorchOn = true
-    }
-
-    override fun onTorchOff() {
-        isTorchOn = false
-    }
-
     companion object {
         private const val TAG = "LiberarLocacaoActivity"
         private const val CAMERA_PERMISSION_REQUEST = 123
