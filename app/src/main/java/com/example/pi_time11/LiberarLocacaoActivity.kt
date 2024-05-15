@@ -34,10 +34,10 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liberar_locacao)
 
-        resultado = findViewById(R.id.resultado_qrcode) // Inicializando o TextView aqui
+        resultado = findViewById(R.id.resultado_qrcode) /// TODO: TESTE DO RESULTADO QRCODE REMOVER
         btnVoltar = findViewById(R.id.btnVoltar)
 
-        btnVoltar.setOnClickListener{
+        btnVoltar.setOnClickListener{  /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
             val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
             finish()
@@ -79,7 +79,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
             Log.d(TAG, "ID do Armário: $armarioId")
 
             // Chama a função para verificação de disponibilidade
-            verificarDisponibilidadeArmario(armarioId)
+            verificarDisponibilidadeArmario(armarioId) /// TODO: ARRUMAR O ERRO DE ACESS_DENIED DO FIREBASE
 
             // teste para ver resultado do qrcode
             resultado.text = armarioId
