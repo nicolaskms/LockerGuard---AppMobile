@@ -113,8 +113,9 @@ class CadastroActivity : AppCompatActivity() {
     private fun sendEmailVerification() {
         // [START send_email_verification]
         val user = Firebase.auth.currentUser
-        user!!.sendEmailVerification()
-            .addOnCompleteListener { task ->
+        Log.d(TAG, "User: $user")
+        user?.sendEmailVerification()
+            ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "Email sent.")
                 }
