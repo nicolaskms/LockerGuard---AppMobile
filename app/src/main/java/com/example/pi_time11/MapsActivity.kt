@@ -74,13 +74,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mMap = googleMap
         mMap.setOnMarkerClickListener(this)
 
-        /*val googleplex = LatLng(37.42205491527951, -122.08611094231884)
-        mMap.addMarker(
-            MarkerOptions()
-                .position(googleplex)
-                .title("LockerGuard - Teste")
-                .snippet("GooglePlex - San Juan")
-        )*/
         // Adiciona marcadores
         val jundiai = LatLng(-23.184810613775756, -46.97102255357517)
         mMap.addMarker(
@@ -160,7 +153,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                 if (!documents.isEmpty) {
                                     // Se existir um pedido, redireciona para a tela de QrCodeActivity
                                     val intent = Intent(this, QrCodeActivity::class.java)
+
+                                    val documento = documents.first()
+                                    val localizacao = documento.getString("localId")
+                                    val tempo = documento.getString("tempo")
+
                                     intent.putExtra("id", armarioId)
+                                    intent.putExtra("localizacao", localizacao)
+                                    intent.putExtra("tempoSelecionado", tempo)
+
                                     startActivity(intent)
                                 } else {
                                     // Se não houver pedido, redireciona para a tela de detalhes do armário
@@ -197,14 +198,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
+
                     val documento = documents.first()
-                    val localizacao = documento.getString("localizacao")
-                    val id = documento.getString("id")
+                    val localizacao = documento.getString("localId")
+                    val tempo = documento.getString("tempo")
 
                     // Criando Intent e passando os dados com o putExtra()
                     val intent = Intent(this, ArmarioActivity::class.java)
+
+                    intent.putExtra("id", armarioId)
                     intent.putExtra("localizacao", localizacao)
-                    intent.putExtra("id", id)
+                    intent.putExtra("tempoSelecionado", tempo)
+
                     startActivity(intent)
                 } else {
                     Toast.makeText(

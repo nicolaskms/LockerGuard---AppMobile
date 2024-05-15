@@ -41,8 +41,9 @@ class QrCodeActivity : AppCompatActivity() {
         val nomeDoGerente = "Gerente_Teste"
         val tempoSelecionado = intent.getStringExtra("tempoSelecionado") ?: "Null"
         val localizacao = intent.getStringExtra("localizacao") ?: "Null"
+        val locString = if (localizacao == "011") "Jundiaí" else "Campinas"
 
-        val qrCodeData = "$armarioId;$nomeDoGerente;$localizacao;$tempoSelecionado"
+        val qrCodeData = "$armarioId;$nomeDoGerente;$locString;$tempoSelecionado"
 
         // Gerar e exibir o QR code
         val bitmap = generateQRCode(qrCodeData)
