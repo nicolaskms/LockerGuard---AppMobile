@@ -75,7 +75,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
             Log.d(TAG, "ID do Armário: $armarioId")
 
             // Chama a função para verificação de disponibilidade
-            verificarDisponibilidadeArmario(armarioId) /// TODO: ARRUMAR O ERRO DE ACESS_DENIED DO FIREBASE
+            verificarDisponibilidadeArmario(armarioId)
 
         } else {
             // Caso não encontre o separador esperado, loga um erro ou mostra uma mensagem
