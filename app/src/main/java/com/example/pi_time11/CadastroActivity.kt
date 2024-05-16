@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CadastroActivity : AppCompatActivity() {
@@ -89,12 +90,23 @@ class CadastroActivity : AppCompatActivity() {
                                     }
                             }
                         } else {
-                            Log.w("CadastroActivity", "createUserWithEmail:failure", task.exception)
-                            Toast.makeText(
-                                baseContext,
-                                "Falha na autenticação.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            try {
+                                throw task.exception!!
+                            } catch (e: FirebaseAuthUserCollisionException) {
+                                Log.w("CadastroActivity", "createUserWithEmail:failure", e)
+                                Toast.makeText(
+                                    baseContext,
+                                    "Email já cadastrado por outro usuário.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } catch (e: Exception) {
+                                Log.w("CadastroActivity", "createUserWithEmail:failure", e)
+                                Toast.makeText(
+                                    baseContext,
+                                    "Falha na autenticação.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 }else{
