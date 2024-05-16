@@ -21,7 +21,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/radioGroup"
         android:gravity="center"/>
+
     <!-- RadioGroup para opções -->
+    <TextView
+        android:id="@+id/fechado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fechado"
+        android:textSize="18dp"
+        android:textColor="@color/Red"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/TextViewOpcoes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/radioGroup"
+        app:layout_constraintVertical_bias="0.5"
+        android:gravity="center"/>
+
+
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="0dp"

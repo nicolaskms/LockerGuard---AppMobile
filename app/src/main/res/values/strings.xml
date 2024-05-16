@@ -40,4 +40,5 @@
     <string name="pagamento">Confirmar Locação</string>
     <string name="maps">Escolha um armário no mapa.</string>
     <string name="Qrcode_Texto">Qrcode gerado</string>
+    <string name="fechado">Estabelecimento fechado.Volte amanhã!</string>
 </resources>

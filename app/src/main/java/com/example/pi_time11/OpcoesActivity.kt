@@ -3,11 +3,12 @@ package com.example.pi_time11
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 
 class OpcoesActivity : AppCompatActivity() {
@@ -16,6 +17,12 @@ class OpcoesActivity : AppCompatActivity() {
     private lateinit var buttonProsseguir: Button
     private lateinit var radioGroup: RadioGroup
     private lateinit var radioButton5: RadioButton
+    private lateinit var radioButton4: RadioButton
+    private lateinit var radioButton3: RadioButton
+    private lateinit var radioButton2: RadioButton
+    private lateinit var radioButton1: RadioButton
+    private lateinit var fechado: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +32,11 @@ class OpcoesActivity : AppCompatActivity() {
         buttonProsseguir = findViewById(R.id.btn_Continuar)
         radioGroup = findViewById(R.id.radioGroup)
         radioButton5 = findViewById(R.id.radioButton5)
+        radioButton4 = findViewById(R.id.radioButton4)
+        radioButton3 = findViewById(R.id.radioButton3)
+        radioButton2 = findViewById(R.id.radioButton2)
+        radioButton1 = findViewById(R.id.radioButton1)
+        fechado = findViewById(R.id.fechado)
 
         buttonVoltar.setOnClickListener {
             finish()
@@ -42,6 +54,20 @@ class OpcoesActivity : AppCompatActivity() {
             radioButton5.visibility = View.VISIBLE
         } else {
             radioButton5.visibility = View.GONE
+        }
+        if(horaAtual >= 14){
+            radioButton4.visibility = View.GONE
+        }
+        if (horaAtual >= 16){
+            radioButton3.visibility = View.GONE
+        }
+        if(horaAtual >= 17){
+            radioButton2.visibility = View.GONE
+        }
+        if (horaAtual >= 18){
+            radioButton1.visibility = View.GONE
+            fechado.visibility = View.VISIBLE
+            buttonProsseguir.visibility = View.GONE
         }
 
         buttonProsseguir.setOnClickListener {
