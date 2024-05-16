@@ -1,6 +1,5 @@
 package com.example.pi_time11
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,11 +7,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -25,8 +22,7 @@ class CadastroActivity : AppCompatActivity() {
     private lateinit var etCelular: TextInputLayout
     private lateinit var etSenha: TextInputLayout
 
-    private var db = Firebase.firestore
-
+    private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +48,6 @@ class CadastroActivity : AppCompatActivity() {
         }
 
         btnCadastrar.setOnClickListener {
-
             val sNome = etNome.editText?.text.toString()
             val sEmail = etEmail.editText?.text.toString()
             val sIdade = etIdade.editText?.text.toString()
@@ -62,62 +57,84 @@ class CadastroActivity : AppCompatActivity() {
 
             if (sNome.isNotEmpty() && sEmail.isNotEmpty() && sIdade.isNotEmpty() &&
                 sCPF.isNotEmpty() && sCelular.isNotEmpty() && sSenha.isNotEmpty()) {
+                if (!sEmail.contains("@admin.com")){
+                    auth.createUserWithEmailAndPassword(sEmail, sSenha)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val userId = auth.currentUser?.uid
+                                val user = hashMapOf(
+                                    "name" to sNome,
+                                    "email" to sEmail,
+                                    "idade" to sIdade,
+                                    "cpf" to sCPF,
+                                    "celular" to sCelular
+                                )
 
-                // Cria o usuário no Firebase Authentication
-                auth.createUserWithEmailAndPassword(sEmail, sSenha)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // Cadastro bem-sucedido, obtém o ID do usuário
-                            val userId = auth.currentUser?.uid
-
-                            // Cria um mapa com os dados do usuário
-                            val user = hashMapOf(
-                                "name" to sNome,
-                                "email" to sEmail,
-                                "idade" to sIdade,
-                                "cpf" to sCPF,
-                                "celular" to sCelular
-                            )
-
-                            // Adiciona os dados do usuário ao Firestore
-                            if (userId != null) {
-                                db.collection("users").document(userId)
-                                    .set(user)
-                                    .addOnSuccessListener {
-                                        Log.d(TAG, "DocumentSnapshot added with ID: $userId")
-                                        //envia email de verificacao
-                                        sendEmailVerification()
-
-                                        // Navega para a próxima tela após o cadastro
-                                        val intent = Intent(this, LoginActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w(TAG, "Error adding document", e)
-                                    }
+                                if (userId != null) {
+                                    db.collection("users").document(userId)
+                                        .set(user)
+                                        .addOnSuccessListener {
+                                            Log.d(
+                                                "CadastroActivity",
+                                                "DocumentSnapshot added with ID: $userId"
+                                            )
+                                            sendEmailVerification()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w("CadastroActivity", "Error adding document", e)
+                                            Toast.makeText(
+                                                baseContext,
+                                                "Erro ao salvar dados do usuário.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
+                            } else {
+                                try {
+                                    throw task.exception!!
+                                } catch (e: FirebaseAuthUserCollisionException) {
+                                    Log.w("CadastroActivity", "createUserWithEmail:failure", e)
+                                    Toast.makeText(
+                                        baseContext,
+                                        "Email já cadastrado por outro usuário.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } catch (e: Exception) {
+                                    Log.w("CadastroActivity", "createUserWithEmail:failure", e)
+                                    Toast.makeText(
+                                        baseContext,
+                                        "Falha na autenticação.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                        } else {
-                            // Exibe mensagem em caso de falha no cadastro
-                            Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                            // Exemplo de mensagem de erro
-                            Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
                         }
-                    }
+                }else{
+                    Toast.makeText(
+                        baseContext,
+                        "Email Invalido.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
-                // Exibe mensagem se algum campo estiver vazio
                 Toast.makeText(baseContext, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
     private fun sendEmailVerification() {
-        // [START send_email_verification]
-        val user = Firebase.auth.currentUser
-        Log.d(TAG, "User: $user")
+        val user = auth.currentUser
         user?.sendEmailVerification()
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "Email sent.")
+                    Log.d("CadastroActivity", "Email de verificação enviado.")
+                    Toast.makeText(this, "Email de verificação enviado. Verifique seu email e faça login.", Toast.LENGTH_LONG).show()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Log.e("CadastroActivity", "Erro ao enviar email de verificação.", task.exception)
+                    Toast.makeText(this, "Erro ao enviar email de verificação.", Toast.LENGTH_SHORT).show()
                 }
             }
     }

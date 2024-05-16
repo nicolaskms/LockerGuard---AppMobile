@@ -5,25 +5,30 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import android.widget.ImageView
 
 class QrCodeActivity : AppCompatActivity() {
-
+    private lateinit var auth: FirebaseAuth
     private lateinit var buttonVoltar: ImageButton
     private lateinit var armarioIdTextView: TextView
     private lateinit var qrCodeImageView: ImageView
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_code)
+        auth = Firebase.auth
 
         // Inicialização dos elementos da UI
         buttonVoltar = findViewById(R.id.btnVoltar)

@@ -1,7 +1,5 @@
 package com.example.pi_time11
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,25 +9,15 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.zxing.Result
-import com.google.zxing.client.android.BeepManager
-import com.google.zxing.client.android.Intents
-import com.journeyapps.barcodescanner.DecoratedBarcodeView
-import com.journeyapps.barcodescanner.DecoratedBarcodeView.TorchListener
-import com.journeyapps.barcodescanner.camera.CameraSettings
-import com.journeyapps.barcodescanner.BarcodeResult
 import com.google.firebase.firestore.FirebaseFirestore
-import com.journeyapps.barcodescanner.ScanOptions
 import com.journeyapps.barcodescanner.ScanContract
-import java.util.logging.Handler
+import com.journeyapps.barcodescanner.ScanOptions
 
 class LiberarLocacaoActivity : AppCompatActivity() {
-    
+
     private lateinit var btnVoltar: Button
     private lateinit var edtText: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +28,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         edtText = findViewById(R.id.txt_qrcode)
 
         btnVoltar.setOnClickListener{  /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
-            val intent = Intent(this, MapsActivity::class.java)
+            val intent = Intent(this, GerenteActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -68,7 +56,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
             }
         }
     private fun voltarParaMapa(){
-        val intent = Intent(this, MapsActivity::class.java)
+        val intent = Intent(this, GerenteActivity::class.java)
         startActivity(intent)
         finish()
     }
