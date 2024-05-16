@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -25,6 +26,7 @@ import com.journeyapps.barcodescanner.BarcodeResult
 import com.google.firebase.firestore.FirebaseFirestore
 import com.journeyapps.barcodescanner.ScanOptions
 import com.journeyapps.barcodescanner.ScanContract
+import java.util.logging.Handler
 
 class LiberarLocacaoActivity : AppCompatActivity() {
     
@@ -67,6 +69,11 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         }
     private fun voltarParaMapa(){
         val intent = Intent(this, MapsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+    private fun selecaoDePessoas(){
+        val intent = Intent(this, SelecaoPessoasActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -130,6 +137,11 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                     // Armário disponível
                     Toast.makeText(this, "Armário Disponivel", Toast.LENGTH_LONG).show()
                     AlocarArmario(armarioId) // se estava disponivel agora não esta mais -> false
+
+                    android.os.Handler(Looper.getMainLooper()).postDelayed({
+                        selecaoDePessoas() // vai para selecao de pessoas após 1.5s
+                    }, 1500)
+
                 } else {
                     // Armário não disponível
                     voltarParaMapa()

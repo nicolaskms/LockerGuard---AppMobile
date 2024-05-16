@@ -36,7 +36,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var buttonSair: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
-
+    private lateinit var buttonScanner: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -48,6 +48,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         buttonSair = findViewById(R.id.buttonSair)
         buttonCadastrarCartao = findViewById(R.id.btn_CadastrarCartao)
         textaviso = findViewById(R.id.TextViewMaps)
+        buttonScanner = findViewById(R.id.btn_Scanear)
         auth = Firebase.auth
 
         buttonSair.setOnClickListener {
@@ -63,6 +64,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             startActivity(intent)
             finish()
         }
+
+        buttonScanner.setOnClickListener {
+            val intent = Intent(this, LiberarLocacaoActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         val user = FirebaseAuth.getInstance().currentUser?.uid
         if (user == null){
             buttonCadastrarCartao.visibility = View.GONE
