@@ -1,6 +1,7 @@
 package com.example.pi_time11
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,14 +27,16 @@ import com.journeyapps.barcodescanner.ScanOptions
 import com.journeyapps.barcodescanner.ScanContract
 
 class LiberarLocacaoActivity : AppCompatActivity() {
-
-
+    
     private lateinit var btnVoltar: Button
+    private lateinit var edtText: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liberar_locacao)
 
         btnVoltar = findViewById(R.id.btnVoltar)
+        edtText = findViewById(R.id.txt_qrcode)
+
         btnVoltar.setOnClickListener{  /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
             val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
@@ -62,6 +65,11 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                 }
             }
         }
+    private fun voltarParaMapa(){
+        val intent = Intent(this, MapsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
     private fun setResult(result: String){
         // Imprime o resultado completo para verificação
         Log.d(TAG, "Resultado completo do QR Code: $result")
@@ -70,6 +78,12 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         if (result.contains(";")) {
             // Divide a string do QR Code e pega a primeira parte (ID do armário)
             val armarioId = result.split(";")[0]
+            val gerenteNome = result.split(";")[1]
+            val localizacao = result.split(";")[2]
+            val locToString = if (localizacao == "011") "Jundiaí" else "Campinas"
+            val tempoSelecionado = result.split(";")[3]
+
+            "Gerente:$gerenteNome\n Localização: $locToString\n Tempo: $tempoSelecionado".also { edtText.text = it }
 
             // Log para verificar o ID do armário
             Log.d(TAG, "ID do Armário: $armarioId")
@@ -114,13 +128,15 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                 val isDisponivel = document.getBoolean("disponivel") ?: false
                 if (isDisponivel) {
                     // Armário disponível
-                    Toast.makeText(this, "Armário Disponivel", Toast.LENGTH_SHORT).show()
-                    liberarArmario(armarioId) // se estava disponivel agora não esta mais -> false
+                    Toast.makeText(this, "Armário Disponivel", Toast.LENGTH_LONG).show()
+                    AlocarArmario(armarioId) // se estava disponivel agora não esta mais -> false
                 } else {
                     // Armário não disponível
-                    Toast.makeText(this, "Armário não está disponível", Toast.LENGTH_SHORT).show()
+                    voltarParaMapa()
+                    Toast.makeText(this, "Armário não está disponível", Toast.LENGTH_LONG).show()
                 }
             } else {
+                voltarParaMapa()
                 Toast.makeText(this, "Armário não encontrado", Toast.LENGTH_SHORT).show()
             }
         }.addOnFailureListener {
@@ -128,11 +144,24 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         }
     }
 
-    fun liberarArmario(armarioId: String) {
+    fun AlocarArmario(armarioId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("armarios")
             .document(armarioId)
             .update("disponivel", false)  // Define o armário como não disponível
+            .addOnSuccessListener {
+                Log.d("Firestore", "Armário $armarioId liberado e marcado como não disponível.")
+                // mudar para outra tela ou mostrar uma confirmação para o usuário?
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Erro ao liberar o armário $armarioId", e)
+            }
+    }
+    fun LiberarArmario(armarioId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("armarios")
+            .document(armarioId)
+            .update("disponivel", true)  // Define o armário como disponível
             .addOnSuccessListener {
                 Log.d("Firestore", "Armário $armarioId liberado e marcado como não disponível.")
                 // mudar para outra tela ou mostrar uma confirmação para o usuário?
