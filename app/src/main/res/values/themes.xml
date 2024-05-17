@@ -11,14 +11,19 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Set Roboto as the default font -->
+        <item name="android:fontFamily">@font/roboto_regular</item>
         <!-- Customize your theme here. -->
     </style>
 
     <style name="TextInputStyle" parent="@android:style/TextAppearance">
         <item name="android:textSize">14sp</item>
+        <!-- Adicione a definição de fonte aqui se necessário -->
     </style>
+
     <style name="HintTextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">@color/cinza_escuro</item>
+        <!-- Adicione a definição de fonte aqui se necessário -->
     </style>
 </resources>
