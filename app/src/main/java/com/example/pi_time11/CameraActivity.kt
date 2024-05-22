@@ -1,6 +1,5 @@
 package com.example.pi_time11
 
-import FirstScanTagActivity
 import android.content.ContentValues
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
