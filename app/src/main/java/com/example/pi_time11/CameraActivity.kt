@@ -3,7 +3,6 @@ package com.example.pi_time11
 import android.content.ContentValues
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,7 +16,6 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import java.io.File
 import java.util.Locale
 
 class CameraActivity : AppCompatActivity() {
@@ -75,7 +73,9 @@ class CameraActivity : AppCompatActivity() {
                     Toast.makeText(this@CameraActivity, msg, Toast.LENGTH_SHORT).show()
 
                     // Redirecionar para outra tela após tirar a foto
+                    val idPedido = intent.getStringExtra("idPedido")
                     val intent = Intent(this@CameraActivity, FirstScanTagActivity::class.java).apply {
+                        putExtra("idPedido",idPedido)
                         putExtra("image_uri", savedUri.toString())
                     }
                     startActivity(intent)

@@ -6,10 +6,7 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class SelecaoPessoasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +39,9 @@ class SelecaoPessoasActivity : AppCompatActivity() {
     }
 
     private fun irParaCamera(){
+        val idPedido = intent.getStringExtra("idPedido")
         val intent = Intent(this, CameraActivity::class.java)
+        intent.putExtra("idPedido",idPedido)
         startActivity(intent)
         finish()
     }
