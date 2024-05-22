@@ -20,6 +20,8 @@ class LiberarLocacaoActivity : AppCompatActivity() {
 
     private lateinit var btnVoltar: Button
     private lateinit var edtText: TextView
+    private lateinit var idPedido: String // Declaração da variável idPedido
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_liberar_locacao)
@@ -27,7 +29,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         btnVoltar = findViewById(R.id.btnVoltar)
         edtText = findViewById(R.id.txt_qrcode)
 
-        btnVoltar.setOnClickListener{  /// TODO: APENAS TESTE NÃO É PARA VOLTAR PRO MAPA, REDIRECIONAR PARA O LOCAL CERTO
+        btnVoltar.setOnClickListener {
             val intent = Intent(this, GerenteActivity::class.java)
             startActivity(intent)
             finish()
@@ -36,12 +38,10 @@ class LiberarLocacaoActivity : AppCompatActivity() {
     }
 
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()){
-            isGranted: Boolean ->
-            if (isGranted){
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
                 showCamera()
-            }
-            else{
+            } else {
                 Toast.makeText(this, "Sem permissão", Toast.LENGTH_SHORT).show()
             }
         }
@@ -55,42 +55,48 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                 }
             }
         }
-    private fun voltarParaMapa(){
+
+    private fun voltarParaMapa() {
         val intent = Intent(this, GerenteActivity::class.java)
         startActivity(intent)
         finish()
     }
-    private fun selecaoDePessoas(){
+
+    private fun selecaoDePessoas() {
         val intent = Intent(this, SelecaoPessoasActivity::class.java)
+        intent.putExtra("idPedido", idPedido)
         startActivity(intent)
         finish()
     }
-    private fun setResult(result: String){
+
+    private fun setResult(result: String) {
         // Imprime o resultado completo para verificação
         Log.d(TAG, "Resultado completo do QR Code: $result")
 
         // Verifica se o resultado contém o separador esperado
         if (result.contains(";")) {
             // Divide a string do QR Code e pega a primeira parte (ID do armário)
-            val armarioId = result.split(";")[0]
-            val clientenome = result.split(";")[1]
-            val localizacao = result.split(";")[2]
-            val tempoSelecionado = result.split(";")[3]
+            val parts = result.split(";")
+            val armarioId = parts[0]
+            val clientenome = parts[1]
+            val localizacao = parts[2]
+            val tempoSelecionado = parts[3]
+            idPedido = parts[4] // Inicializa a variável idPedido
 
-            "Cliente:$clientenome\n Localização: $localizacao\n Tempo: $tempoSelecionado".also { edtText.text = it }
+            "Cliente:$clientenome\n Localização: $localizacao\n Tempo: $tempoSelecionado\n Id do Pedido: $idPedido".also { edtText.text = it }
 
             // Log para verificar o ID do armário
             Log.d(TAG, "ID do Armário: $armarioId")
 
             // Chama a função para verificação de disponibilidade
             verificarDisponibilidadeArmario(armarioId)
-
         } else {
             // Caso não encontre o separador esperado, loga um erro ou mostra uma mensagem
             Log.e(TAG, "Formato do QR Code não esperado: $result")
             Toast.makeText(this, "Formato do QR Code inválido.", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun showCamera() {
         val options = ScanOptions()
         options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
@@ -101,16 +107,13 @@ class LiberarLocacaoActivity : AppCompatActivity() {
 
         scanLauncher.launch(options)
     }
-    private fun CheckCameraPermissions(context: Context)
-    {
-        if (ContextCompat.checkSelfPermission(context,android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-                showCamera()
-        }
-        else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA))
-        {
-            Toast.makeText(this, "Permissão para utilizar a camera é necessario", Toast.LENGTH_SHORT).show()
-        }
-        else{
+
+    private fun CheckCameraPermissions(context: Context) {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            showCamera()
+        } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) {
+            Toast.makeText(this, "Permissão para utilizar a câmera é necessária", Toast.LENGTH_SHORT).show()
+        } else {
             requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
         }
     }
@@ -129,7 +132,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                     AlocarArmario(armarioId) // Se estava disponível agora não está mais -> false
 
                     android.os.Handler(Looper.getMainLooper()).postDelayed({
-                        selecaoDePessoas() // Vai para seleção de pessoas após 1.5s
+                        selecaoDePessoas() // Chama a função para ir para a próxima tela
                     }, 1500)
                     return@addOnSuccessListener
                 }
@@ -144,7 +147,6 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         }
     }
 
-
     fun AlocarArmario(armarioId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("armarios")
@@ -158,19 +160,21 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                 Log.w("Firestore", "Erro ao liberar o armário $armarioId", e)
             }
     }
+
     fun LiberarArmario(armarioId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("armarios")
             .document(armarioId)
             .update("disponivel", true)  // Define o armário como disponível
             .addOnSuccessListener {
-                Log.d("Firestore", "Armário $armarioId liberado e marcado como não disponível.")
+                Log.d("Firestore", "Armário $armarioId liberado e marcado como disponível.")
                 // mudar para outra tela ou mostrar uma confirmação para o usuário?
             }
             .addOnFailureListener { e ->
                 Log.w("Firestore", "Erro ao liberar o armário $armarioId", e)
             }
     }
+
     companion object {
         private const val TAG = "LiberarLocacaoActivity"
         private const val CAMERA_PERMISSION_REQUEST = 123
