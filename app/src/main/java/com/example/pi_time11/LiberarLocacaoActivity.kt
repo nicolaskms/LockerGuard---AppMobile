@@ -117,32 +117,34 @@ class LiberarLocacaoActivity : AppCompatActivity() {
     }
 
     private fun verificarDisponibilidadeArmario(armarioId: String) {
-        val docRef = FirebaseFirestore.getInstance().collection("armarios").document(armarioId)
-        docRef.get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                val isDisponivel = document.getBoolean("disponivel") ?: false
+        val db = FirebaseFirestore.getInstance()
+        val armariosRef = db.collection("armarios").document(armarioId)
+        val unidadesRef = armariosRef.collection("unidades")
+
+        unidadesRef.get().addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot.documents) {
+                val isDisponivel = document.getBoolean("status") ?: false
                 if (isDisponivel) {
                     // Armário disponível
-                    Toast.makeText(this, "Armário Disponivel", Toast.LENGTH_LONG).show()
-                    AlocarArmario(armarioId) // se estava disponivel agora não esta mais -> false
+                    Toast.makeText(this, "Armário Disponível", Toast.LENGTH_LONG).show()
+                    AlocarArmario(armarioId) // Se estava disponível agora não está mais -> false
 
                     android.os.Handler(Looper.getMainLooper()).postDelayed({
-                        selecaoDePessoas() // vai para selecao de pessoas após 1.5s
+                        selecaoDePessoas() // Vai para seleção de pessoas após 1.5s
                     }, 1500)
-
-                } else {
-                    // Armário não disponível
-                    voltarParaMapa()
-                    Toast.makeText(this, "Armário não está disponível", Toast.LENGTH_LONG).show()
+                    return@addOnSuccessListener
                 }
-            } else {
-                voltarParaMapa()
-                Toast.makeText(this, "Armário não encontrado", Toast.LENGTH_SHORT).show()
             }
-        }.addOnFailureListener {
-            Toast.makeText(this, "Erro ao acessar dados", Toast.LENGTH_SHORT).show()
+            // Se nenhum documento estiver disponível
+            voltarParaMapa()
+            Toast.makeText(this, "Nenhum armário disponível", Toast.LENGTH_LONG).show()
+        }.addOnFailureListener { exception ->
+            // Em caso de falha ao acessar os dados
+            voltarParaMapa()
+            Toast.makeText(this, "Erro ao acessar dados: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     fun AlocarArmario(armarioId: String) {
         val db = FirebaseFirestore.getInstance()

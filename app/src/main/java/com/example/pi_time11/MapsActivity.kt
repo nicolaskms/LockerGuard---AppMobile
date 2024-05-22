@@ -32,7 +32,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var buttonCadastrarCartao: Button
-    private lateinit var textaviso:TextView
+    private lateinit var textaviso: TextView
     private lateinit var buttonSair: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
@@ -58,12 +58,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         buttonCadastrarCartao.setOnClickListener {
             val tela = "1"
             val intent = Intent(this, CartaoActivity::class.java)
-            intent.putExtra("tela",tela)
+            intent.putExtra("tela", tela)
             startActivity(intent)
             finish()
         }
         val user = FirebaseAuth.getInstance().currentUser?.uid
-        if (user == null){
+        if (user == null) {
             buttonCadastrarCartao.visibility = View.GONE
             textaviso.text = "Crie uma conta ou faça login para alugar um armário!"
         }
@@ -91,8 +91,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         )
 
         // Obtém e exibe a localização do usuário
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
@@ -110,7 +116,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_ACCESS_LOCATION -> {
@@ -118,10 +128,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     // Permissão concedida, agora podemos atualizar a localização do usuário
                     onMapReady(mMap)
                 } else {
-                    Toast.makeText(this, "Permissão de localização negada", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Permissão de localização negada", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 return
             }
+
             else -> {
                 // Ignore all other requests.
             }
@@ -143,8 +155,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
                         // Consulta para buscar o pedido do usuário para o armário
                         val usuarioId = auth.currentUser?.uid
-                        val armarioId = if (marker.title == "LockerGuard - Jundiaí") "011" else "012"
-                        val localizacao = if (marker.title == "LockerGuard - Jundiaí") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
+                        val armarioId =
+                            if (marker.title == "LockerGuard - Jundiaí") "011" else "012"
+                        val localizacao =
+                            if (marker.title == "LockerGuard - Jundiaí") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
                         pedidosRef.whereEqualTo("userId", usuarioId)
                             .whereEqualTo("localId", armarioId)
                             .get()
@@ -199,7 +213,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
                     val documento = documents.first()
                     val tempo = documento.getString("tempo")
-                    val localizacao = if (armarioId == "011") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
+                    val localizacao =
+                        if (armarioId == "011") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
                     // Criando Intent e passando os dados com o putExtra()
                     val intent = Intent(this, ArmarioActivity::class.java)
 

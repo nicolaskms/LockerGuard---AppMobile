@@ -1,6 +1,8 @@
 package com.example.pi_time11
 
+import FirstScanTagActivity
 import android.content.ContentValues
+import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Build
@@ -73,7 +75,11 @@ class CameraActivity : AppCompatActivity() {
                     val msg = "Foto salva em: $savedUri"
                     Toast.makeText(this@CameraActivity, msg, Toast.LENGTH_SHORT).show()
 
-                    ///TODO Redirecionar para outra tela após tirar a foto
+                    // Redirecionar para outra tela após tirar a foto
+                    val intent = Intent(this@CameraActivity, FirstScanTagActivity::class.java).apply {
+                        putExtra("image_uri", savedUri.toString())
+                    }
+                    startActivity(intent)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
