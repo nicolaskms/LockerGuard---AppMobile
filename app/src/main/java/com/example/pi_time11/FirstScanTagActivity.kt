@@ -1,14 +1,14 @@
 package com.example.pi_time11
 
-import com.example.pi_time11.R
 import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 class FirstScanTagActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
@@ -46,6 +46,7 @@ class FirstScanTagActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent?.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+            Log.d("NFC_TAG", "Nova intenção NFC recebida")
             intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.let { rawMessages ->
                 val ndefMessages = Array(rawMessages.size) { i ->
                     rawMessages[i] as NdefMessage

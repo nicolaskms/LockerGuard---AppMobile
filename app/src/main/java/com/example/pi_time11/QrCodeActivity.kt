@@ -24,7 +24,6 @@ class QrCodeActivity : AppCompatActivity() {
     private lateinit var armarioIdTextView: TextView
     private lateinit var qrCodeImageView: ImageView
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_code)
@@ -43,16 +42,28 @@ class QrCodeActivity : AppCompatActivity() {
             armarioIdTextView.text = armarioId
         }
 
-        val nomeDoGerente = "Gerente_Teste"
-        val tempoSelecionado = intent.getStringExtra("tempoSelecionado") ?: "Null"
-        val localizacao = intent.getStringExtra("localizacao") ?: "Null"
-        val locString = if (localizacao == "011") "Jundiaí" else "Campinas"
+        // Consulta ao Firestore para obter o nome do cliente usando o ID do usuário autenticado
+        // Consulta ao Firestore para obter o nome do cliente usando o ID do usuário autenticado
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(auth.currentUser?.uid ?: "")
 
-        val qrCodeData = "$armarioId;$nomeDoGerente;$locString;$tempoSelecionado"
+        userRef.get()
+            .addOnSuccessListener { userDocument ->
+                if (userDocument != null && userDocument.exists()) {
+                    val nomeDoCliente = userDocument.getString("name")
+                    val tempoSelecionado = intent.getStringExtra("tempoSelecionado") ?: "Null"
+                    val locString = if (armarioId == "011") "Jundiaí" else "Campinas" // Corrigido aqui
+                    val qrCodeData = "$armarioId;$nomeDoCliente;$locString;$tempoSelecionado"
+                    val bitmap = generateQRCode(qrCodeData)
+                    qrCodeImageView.setImageBitmap(bitmap)
+                } else {
+                    Log.d(TAG, "Documento de usuário não encontrado")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Falha ao obter documento de usuário: ", exception)
+            }
 
-        // Gerar e exibir o QR code
-        val bitmap = generateQRCode(qrCodeData)
-        qrCodeImageView.setImageBitmap(bitmap)
 
         // Ação do botão "Voltar"
         buttonVoltar.setOnClickListener {
@@ -62,10 +73,9 @@ class QrCodeActivity : AppCompatActivity() {
         }
 
         // Consulta ao Firestore para obter outros dados do armário, se necessário
-        val db = FirebaseFirestore.getInstance()
-        val armariosRef = db.collection("armarios").document(armarioId ?: "01") // Usando o ID recebido
+        val armariosRef = FirebaseFirestore.getInstance().collection("armarios").document(armarioId ?: "01")
 
-        armariosRef.get() //  inicia a consulta ao Firestore para obter o documento da coleção "armarios"
+        armariosRef.get() // inicia a consulta ao Firestore para obter o documento da coleção "armarios"
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val armario = document.getString("armario")

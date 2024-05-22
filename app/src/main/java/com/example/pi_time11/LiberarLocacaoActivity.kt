@@ -73,12 +73,11 @@ class LiberarLocacaoActivity : AppCompatActivity() {
         if (result.contains(";")) {
             // Divide a string do QR Code e pega a primeira parte (ID do armário)
             val armarioId = result.split(";")[0]
-            val gerenteNome = result.split(";")[1]
+            val clientenome = result.split(";")[1]
             val localizacao = result.split(";")[2]
-            val locToString = if (localizacao == "011") "Jundiaí" else "Campinas"
             val tempoSelecionado = result.split(";")[3]
 
-            "Gerente:$gerenteNome\n Localização: $locToString\n Tempo: $tempoSelecionado".also { edtText.text = it }
+            "Cliente:$clientenome\n Localização: $localizacao\n Tempo: $tempoSelecionado".also { edtText.text = it }
 
             // Log para verificar o ID do armário
             Log.d(TAG, "ID do Armário: $armarioId")
