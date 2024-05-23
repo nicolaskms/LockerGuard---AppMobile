@@ -52,9 +52,9 @@ class QrCodeActivity : AppCompatActivity() {
             if (userDocument != null && userDocument.exists()) {
                 val nomeDoCliente = userDocument.getString("name")
                 val tempoSelecionado = intent.getStringExtra("tempoSelecionado") ?: "Null"
-                val localizacao = intent.getStringExtra("localizacao") ?: "Null"
-                val locString = if (localizacao == "011") "Jundiaí" else "Campinas"
+                val locString = if (armarioId == "011") "Jundiaí" else "Campinas"
 
+                // Agora buscamos o pedido associado ao usuário
                 pedidoRef.get().addOnSuccessListener { querySnapshot ->
                     if (!querySnapshot.isEmpty) {
                         val pedidoDocument = querySnapshot.documents[0]

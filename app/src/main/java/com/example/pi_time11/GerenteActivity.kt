@@ -3,7 +3,6 @@ package com.example.pi_time11
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import com.google.firebase.auth.FirebaseAuth
@@ -25,11 +24,9 @@ class GerenteActivity : AppCompatActivity() {
 
 
         btnLiberarLoc.setOnClickListener {
-            Toast.makeText(
-                baseContext,
-                "Clicou.",
-                Toast.LENGTH_SHORT,
-            ).show()
+            val intent = Intent(this, LiberarLocActivity::class.java)
+            startActivity(intent)
+            finish()
         }
         btnLocarArmario.setOnClickListener {
             val intent = Intent(this, LiberarLocacaoActivity::class.java)
