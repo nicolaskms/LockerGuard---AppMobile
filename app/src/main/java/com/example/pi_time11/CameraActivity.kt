@@ -1,12 +1,16 @@
 package com.example.pi_time11
 
 import android.content.ContentValues
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -15,7 +19,9 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.util.Locale
 
@@ -23,14 +29,23 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraView: PreviewView
     private lateinit var imageCapture: ImageCapture
+    private lateinit var capturedImageView: ImageView
+    private lateinit var storage: FirebaseStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         cameraView = findViewById(R.id.camera_view)
+        capturedImageView = findViewById(R.id.captured_image_view)
+        storage = FirebaseStorage.getInstance()
 
-        setupCamera()
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE), CAMERA_PERMISSION_REQUEST)
+        } else {
+            setupCamera()
+        }
 
         val captureButton: Button = findViewById(R.id.capture_button)
         captureButton.setOnClickListener { capturePhoto() }
@@ -46,39 +61,69 @@ class CameraActivity : AppCompatActivity() {
 
             imageCapture = ImageCapture.Builder().build()
 
-            cameraProvider.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+            } catch (e: Exception) {
+                Log.e("Camera", "Erro ao configurar a câmera", e)
+            }
         }, ContextCompat.getMainExecutor(this))
     }
 
     private fun capturePhoto() {
-        val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis())
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/CameraX-Photos")
-            }
-        }
+        val outputDirectory = cacheDir
+        val photoFile = File(outputDirectory, SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".jpg")
 
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(
-            contentResolver,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        ).build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val savedUri = outputFileResults.savedUri
-                    val msg = "Foto salva em: $savedUri"
-                    Toast.makeText(this@CameraActivity, msg, Toast.LENGTH_SHORT).show()
+                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                    capturedImageView.setImageBitmap(bitmap)
+                    capturedImageView.visibility = ImageView.VISIBLE
+                    cameraView.visibility = PreviewView.GONE
 
-                    ///TODO Redirecionar para outra tela após tirar a foto
+                    uploadImageToFirebase(photoFile)
+
+                    Toast.makeText(this@CameraActivity, "Foto capturada", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(this@CameraActivity, "Erro ao salvar a foto: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CameraActivity, "Erro ao capturar a foto: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }
+
+    private fun uploadImageToFirebase(photoFile: File) {
+        val storageRef = storage.reference
+        val imagesRef = storageRef.child("images/${photoFile.name}")
+        val fileUri = Uri.fromFile(photoFile)
+
+        imagesRef.putFile(fileUri)
+            .addOnSuccessListener {
+                Toast.makeText(this@CameraActivity, "Upload bem-sucedido", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this@CameraActivity, "Falha no upload: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setupCamera()
+            } else {
+                Toast.makeText(this, "Permissões necessárias não concedidas", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST = 123
+    }
+
 }
