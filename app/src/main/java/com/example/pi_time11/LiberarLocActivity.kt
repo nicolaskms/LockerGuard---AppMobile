@@ -6,6 +6,7 @@ import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -60,7 +61,10 @@ class LiberarLocActivity : AppCompatActivity() {
                     val payload = ndefMessages[0].records[0].payload
                     val tagContent = String(payload).substring(3) // Remove prefixo de codificação de texto
                     Toast.makeText(this, "Conteúdo da tag: $tagContent", Toast.LENGTH_SHORT).show()
+                    android.os.Handler(Looper.getMainLooper()).postDelayed({
                     deletePedidoWithNfcId(tagContent)
+                        val intent = Intent(this, QrCodeActivity::class.java)
+                        startActivity(intent) }, 1500)
                 } else {
                     Log.e("NFC_TAG", "Nenhuma mensagem NDEF encontrada")
                     Toast.makeText(this, "Nenhuma mensagem NDEF encontrada", Toast.LENGTH_SHORT).show()
