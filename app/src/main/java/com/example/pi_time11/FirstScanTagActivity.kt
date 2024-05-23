@@ -3,7 +3,10 @@ package com.example.pi_time11
 import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NdefMessage
+import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.nfc.tech.Ndef
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class FirstScanTagActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private lateinit var pendingIntent: PendingIntent
-    private lateinit var buttonVoltar:Button
+    private lateinit var buttonVoltar: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,29 +67,49 @@ class FirstScanTagActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         if (intent?.action == NfcAdapter.ACTION_NDEF_DISCOVERED || intent?.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
             Log.d("NFC_TAG", "Nova intenção NFC recebida")
-            intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.let { rawMessages ->
-                if (rawMessages.isNotEmpty()) {
-                    val ndefMessages = Array(rawMessages.size) { i ->
-                        rawMessages[i] as NdefMessage
-                    }
-                    val payload = ndefMessages[0].records[0].payload
-                    val tagContent = String(payload).substring(3) // Remove prefixo de codificação de texto
-                    Toast.makeText(this, "Conteúdo da tag: $tagContent", Toast.LENGTH_SHORT).show()
-                    updatePedidoWithNfcId(tagContent)
-                } else {
-                    Log.e("NFC_TAG", "Nenhuma mensagem NDEF encontrada")
-                    Toast.makeText(this, "Nenhuma mensagem NDEF encontrada", Toast.LENGTH_SHORT).show()
-                }
+            val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
+            tag?.let {
+                handleTag(tag)
             }
         } else {
             Log.e("NFC_TAG", "Intenção NFC desconhecida: ${intent?.action}")
         }
     }
 
-    private fun updatePedidoWithNfcId(nfcId: String) {
+    private fun handleTag(tag: Tag) {
+        val idPedido = intent.getStringExtra("idPedido") ?: return
+        val ndef = Ndef.get(tag)
+
+        if (ndef != null) {
+            ndef.connect()
+            val ndefMessage = ndef.cachedNdefMessage
+            val ndefRecord = ndefMessage?.records?.get(0)
+            val tagContent = ndefRecord?.payload?.let { String(it).substring(3) }
+
+            if (tagContent != null) {
+                Log.d("NFC_TAG", "Conteúdo atual da tag: $tagContent")
+            } else {
+                Log.d("NFC_TAG", "A tag está vazia")
+            }
+
+            val updatedRecord = NdefRecord.createTextRecord("en", idPedido)
+            val updatedMessage = NdefMessage(arrayOf(updatedRecord))
+            ndef.writeNdefMessage(updatedMessage)
+            ndef.close()
+
+            Log.d("NFC_TAG", "ID do pedido escrito na tag NFC: $idPedido")
+            Toast.makeText(this, "Tag NFC atualizada com o ID do pedido.", Toast.LENGTH_SHORT).show()
+
+            updatePedidoWithNfc(idPedido)
+        } else {
+            Log.e("NFC_TAG", "A tag não suporta NDEF")
+            Toast.makeText(this, "A tag não suporta NDEF.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updatePedidoWithNfc(idPedido: String) {
         val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val idPedido = intent.getStringExtra("idPedido")
         if (userId != null) {
             db.collection("pedidos")
                 .whereEqualTo(FieldPath.documentId(), idPedido)
@@ -96,10 +119,10 @@ class FirstScanTagActivity : AppCompatActivity() {
                         for (document in documents) {
                             val pedidoId = document.id
                             db.collection("pedidos").document(pedidoId)
-                                .update("nfc", nfcId)
+                                .update("nfc", true)
                                 .addOnSuccessListener {
                                     Log.d("NFC_TAG", "Documento do pedido atualizado com sucesso.")
-                                    Toast.makeText(this, "Pedido atualizado com ID NFC.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Pedido atualizado com status NFC.", Toast.LENGTH_SHORT).show()
                                 }
                                 .addOnFailureListener { e ->
                                     Log.w("NFC_TAG", "Erro ao atualizar o documento do pedido", e)

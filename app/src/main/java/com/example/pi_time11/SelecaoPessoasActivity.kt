@@ -26,10 +26,12 @@ class SelecaoPessoasActivity : AppCompatActivity() {
                 if (selectedOption == "Uma pessoa")
                 {
                     irParaCamera()
+                    intent.putExtra("pessoas",1)
                 }
                 else
                 {
                     irParaCamera()
+                    intent.putExtra("pessoas",2)
                 }
 
             } else {

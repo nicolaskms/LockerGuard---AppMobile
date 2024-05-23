@@ -26,7 +26,6 @@ class GerenteActivity : AppCompatActivity() {
         btnLiberarLoc.setOnClickListener {
             val intent = Intent(this, LiberarLocActivity::class.java)
             startActivity(intent)
-            finish()
         }
         btnLocarArmario.setOnClickListener {
             val intent = Intent(this, LiberarLocacaoActivity::class.java)
