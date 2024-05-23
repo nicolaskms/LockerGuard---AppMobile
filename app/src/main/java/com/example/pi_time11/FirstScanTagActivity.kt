@@ -7,15 +7,18 @@ import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 
+@Suppress("NAME_SHADOWING")
 class FirstScanTagActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private lateinit var pendingIntent: PendingIntent
+    private lateinit var buttonVoltar:Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +36,12 @@ class FirstScanTagActivity : AppCompatActivity() {
 
         pendingIntent = PendingIntent.getActivity(this, 0, intent, flags)
 
+        buttonVoltar = findViewById(R.id.btnVoltar)
+        buttonVoltar.setOnClickListener {
+            val intent = Intent(this, GerenteActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         if (nfcAdapter == null) {
             Toast.makeText(this, "NFC não está disponível", Toast.LENGTH_LONG).show()
