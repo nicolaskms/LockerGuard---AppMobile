@@ -35,7 +35,6 @@ class LiberarLocActivity : AppCompatActivity() {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         if (nfcAdapter == null) {
             Toast.makeText(this, "NFC não está disponível", Toast.LENGTH_LONG).show()
-            finish()
             return
         }
     }
