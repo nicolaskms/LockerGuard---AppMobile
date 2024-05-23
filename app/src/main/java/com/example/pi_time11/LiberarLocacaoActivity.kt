@@ -70,32 +70,32 @@ class LiberarLocacaoActivity : AppCompatActivity() {
     }
 
     private fun setResult(result: String) {
-        // Imprime o resultado completo para verificação
         Log.d(TAG, "Resultado completo do QR Code: $result")
 
-        // Verifica se o resultado contém o separador esperado
         if (result.contains(";")) {
-            // Divide a string do QR Code e pega a primeira parte (ID do armário)
             val parts = result.split(";")
-            val armarioId = parts[0]
-            val clientenome = parts[1]
-            val localizacao = parts[2]
-            val tempoSelecionado = parts[3]
-            idPedido = parts[4] // Inicializa a variável idPedido
+            if (parts.size >= 5) {
+                val armarioId = parts[0]
+                val clientenome = parts[1]
+                val localizacao = parts[2]
+                val tempoSelecionado = parts[3]
+                idPedido = parts[4] // Inicializa a variável idPedido
 
-            "Cliente:$clientenome\n Localização: $localizacao\n Tempo: $tempoSelecionado\n Id do Pedido: $idPedido".also { edtText.text = it }
+                "Cliente:$clientenome\n Localização: $localizacao\n Tempo: $tempoSelecionado\n Id do Pedido: $idPedido".also { edtText.text = it }
 
-            // Log para verificar o ID do armário
-            Log.d(TAG, "ID do Armário: $armarioId")
+                Log.d(TAG, "ID do Armário: $armarioId")
 
-            // Chama a função para verificação de disponibilidade
-            verificarDisponibilidadeArmario(armarioId)
+                verificarDisponibilidadeArmario(armarioId)
+            } else {
+                Log.e(TAG, "Formato do QR Code não esperado: $result")
+                Toast.makeText(this, "Formato do QR Code inválido.", Toast.LENGTH_SHORT).show()
+            }
         } else {
-            // Caso não encontre o separador esperado, loga um erro ou mostra uma mensagem
             Log.e(TAG, "Formato do QR Code não esperado: $result")
             Toast.makeText(this, "Formato do QR Code inválido.", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun showCamera() {
         val options = ScanOptions()
