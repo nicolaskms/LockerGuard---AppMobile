@@ -63,7 +63,7 @@ class LiberarLocActivity : AppCompatActivity() {
                     Toast.makeText(this, "Conteúdo da tag: $tagContent", Toast.LENGTH_SHORT).show()
                     android.os.Handler(Looper.getMainLooper()).postDelayed({
                     deletePedidoWithNfcId(tagContent)
-                        val intent = Intent(this, QrCodeActivity::class.java)
+                        val intent = Intent(this, GerenteActivity::class.java)
                         startActivity(intent) }, 1500)
                 } else {
                     Log.e("NFC_TAG", "Nenhuma mensagem NDEF encontrada")
