@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -16,11 +17,17 @@ import com.google.firebase.firestore.FirebaseFirestore
 class LiberarLocActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private lateinit var pendingIntent: PendingIntent
-
+    private lateinit var buttonVoltar: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_first_scan_tag)
+        setContentView(R.layout.activity_liberar_loc)
 
+        buttonVoltar = findViewById(R.id.btnVoltar)
+        buttonVoltar.setOnClickListener {
+            val intent = Intent(this, GerenteActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         } else {

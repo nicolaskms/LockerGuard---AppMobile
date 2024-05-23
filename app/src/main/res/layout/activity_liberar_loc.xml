@@ -27,6 +27,19 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:src="@drawable/baseline_nfc_24" />
-
+    <Button
+        android:id="@+id/btnVoltar"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Voltar ao Menu"
+        android:textAllCaps="true"
+        android:textColorHint="@color/white"
+        android:layout_gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:layout_constraintTop_toBottomOf="@id/btnProsseguir"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="32dp"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
