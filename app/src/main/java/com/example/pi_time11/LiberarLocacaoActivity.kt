@@ -63,10 +63,41 @@ class LiberarLocacaoActivity : AppCompatActivity() {
     }
 
     private fun selecaoDePessoas() {
-        val intent = Intent(this, SelecaoPessoasActivity::class.java)
-        intent.putExtra("idPedido", idPedido)
-        startActivity(intent)
-        finish()
+        getIdUsuarioDoPedido(idPedido) { userId ->
+            if (userId != null) {
+                val intent = Intent(this, SelecaoPessoasActivity::class.java)
+                intent.putExtra("idPedido", idPedido)
+                intent.putExtra("userid", userId)
+                startActivity(intent)
+                finish()
+            } else {
+                // Se o ID do usuário não for válido, mostrar uma mensagem de erro
+                Toast.makeText(this, "ID do usuário não encontrado.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun getIdUsuarioDoPedido(idPedido: String, callback: (String?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        // Consultar o documento do pedido no banco de dados
+        db.collection("pedidos").document(idPedido)
+            .get()
+            .addOnSuccessListener { document ->
+                // Verificar se o documento existe e contém o campo de ID do usuário
+                if (document.exists()) {
+                    val userId = document.getString("userId")
+                    callback(userId)
+                } else {
+                    // Se o documento não existir, retornar null
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { e ->
+                // Em caso de falha ao acessar os dados, retornar null e registrar o erro
+                Log.e(TAG, "Erro ao obter o ID do usuário do pedido", e)
+                callback(null)
+            }
     }
 
     private fun setResult(result: String) {
@@ -132,7 +163,7 @@ class LiberarLocacaoActivity : AppCompatActivity() {
                     AlocarArmario(armarioId) // Se estava disponível agora não está mais -> false
 
                     android.os.Handler(Looper.getMainLooper()).postDelayed({
-                        selecaoDePessoas() // Chama a função para ir para a próxima tela
+                        selecaoDePessoas()
                     }, 1500)
                     return@addOnSuccessListener
                 }

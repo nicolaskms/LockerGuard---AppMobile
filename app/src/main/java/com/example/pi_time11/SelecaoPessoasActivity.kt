@@ -41,9 +41,11 @@ class SelecaoPessoasActivity : AppCompatActivity() {
     }
 
     private fun irParaCamera(){
+        val userid = intent.getStringExtra("userid")
         val idPedido = intent.getStringExtra("idPedido")
         val intent = Intent(this, CameraActivity::class.java)
         intent.putExtra("idPedido",idPedido)
+        intent.putExtra("userid",userid)
         startActivity(intent)
         finish()
     }
