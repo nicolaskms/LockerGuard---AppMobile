@@ -24,9 +24,12 @@ class GerenteActivity : AppCompatActivity() {
         buttonFoto = findViewById(R.id.button_ver_foto)
         auth = FirebaseAuth.getInstance()
 
+        val photoUri = intent.getStringExtra("photoUri")
 
         buttonFoto.setOnClickListener {
-            val intent = Intent(this, FotoActivity::class.java)
+            val intent = Intent(this, FotoActivity::class.java).apply {
+                putExtra("photoUri", photoUri)
+            }
             startActivity(intent)
             finish()
         }

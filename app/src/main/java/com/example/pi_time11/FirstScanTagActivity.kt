@@ -37,11 +37,15 @@ class FirstScanTagActivity : AppCompatActivity() {
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
 
+        val photoUri = intent.getStringExtra("photoUri") ?: return
+
         pendingIntent = PendingIntent.getActivity(this, 0, intent, flags)
 
         buttonVoltar = findViewById(R.id.btnVoltar)
         buttonVoltar.setOnClickListener {
-            val intent = Intent(this, GerenteActivity::class.java)
+            val intent = Intent(this, GerenteActivity::class.java).apply {
+                putExtra("photoUri", photoUri)
+            }
             startActivity(intent)
             finish()
         }
@@ -77,6 +81,7 @@ class FirstScanTagActivity : AppCompatActivity() {
 
     private fun handleTag(tag: Tag) {
         val idPedido = intent.getStringExtra("idPedido") ?: return
+
         val ndef = Ndef.get(tag)
 
         if (ndef != null) {
