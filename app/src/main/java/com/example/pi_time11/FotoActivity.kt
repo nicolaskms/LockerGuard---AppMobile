@@ -50,7 +50,7 @@ class FotoActivity : AppCompatActivity() {
     }
 
     private fun fetchUserIdFromPedido(pedidoId: String) {
-        firestore.collection("pedidos").document("w4qDzeEER0ozAvgHBr7B").get() // teste sem o id passado pelo NFC
+        firestore.collection("pedidos").document(pedidoId).get() // teste sem o id passado pelo NFC
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val userId = document.getString("userId")
