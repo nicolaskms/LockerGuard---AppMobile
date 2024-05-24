@@ -12,7 +12,7 @@
         android:id="@+id/textViewStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Aproxime a pulseira NFC"
+        android:text="Aproxime novamente a pulseira NFC"
         android:textSize="18sp"
         android:layout_gravity="center"
         android:layout_marginTop="240dp"
