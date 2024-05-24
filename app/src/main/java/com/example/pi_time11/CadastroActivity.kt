@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CadastroActivity : AppCompatActivity() {
@@ -57,6 +59,7 @@ class CadastroActivity : AppCompatActivity() {
 
             if (sNome.isNotEmpty() && sEmail.isNotEmpty() && sIdade.isNotEmpty() &&
                 sCPF.isNotEmpty() && sCelular.isNotEmpty() && sSenha.isNotEmpty()) {
+
                 if (!sEmail.contains("@admin.com")){
                     auth.createUserWithEmailAndPassword(sEmail, sSenha)
                         .addOnCompleteListener { task ->
@@ -108,6 +111,36 @@ class CadastroActivity : AppCompatActivity() {
                                     ).show()
                                 }
                             }
+
+
+                auth.createUserWithEmailAndPassword(sEmail, sSenha)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val userId = auth.currentUser?.uid
+                            val user = hashMapOf(
+                                "name" to sNome,
+                                "email" to sEmail,
+                                "idade" to sIdade,
+                                "cpf" to sCPF,
+                                "celular" to sCelular
+                            )
+
+                            if (userId != null) {
+                                db.collection("users").document(userId)
+                                    .set(user)
+                                    .addOnSuccessListener {
+                                        Log.d("CadastroActivity", "DocumentSnapshot added with ID: $userId")
+                                        sendEmailVerification()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("CadastroActivity", "Error adding document", e)
+                                        Toast.makeText(baseContext, "Erro ao salvar dados do usuário.", Toast.LENGTH_SHORT).show()
+                                    }
+                            }
+                        } else {
+                            Log.w("CadastroActivity", "createUserWithEmail:failure", task.exception)
+                            Toast.makeText(baseContext, "Falha na autenticação.", Toast.LENGTH_SHORT).show()
+
                         }
                 }else{
                     Toast.makeText(

@@ -155,10 +155,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
                         // Consulta para buscar o pedido do usuário para o armário
                         val usuarioId = auth.currentUser?.uid
+
                         val armarioId =
                             if (marker.title == "LockerGuard - Jundiaí") "011" else "012"
                         val localizacao =
                             if (marker.title == "LockerGuard - Jundiaí") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
+
+                        val armarioId = if (marker.title == "LockerGuard - Jundiaí") "011" else "012"
+                        val localizacao = if (marker.title == "LockerGuard - Jundiaí") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
+
                         pedidosRef.whereEqualTo("userId", usuarioId)
                             .whereEqualTo("localId", armarioId)
                             .get()
@@ -168,6 +173,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                     val intent = Intent(this, QrCodeActivity::class.java)
 
                                     val documento = documents.first()
+
                                     val tempo = documento.getString("tempo")
 
                                     intent.putExtra("id", armarioId)
@@ -213,11 +219,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
                     val documento = documents.first()
                     val tempo = documento.getString("tempo")
+
                     val localizacao =
                         if (armarioId == "011") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
+
+                    val localizacao = if (armarioId == "011") "Rua Chiara Lubich - Jundiai" else "Av. Reitor Benedito José Barreto Fonseca, Prédio H15 - Parque dos Jacarandás, Campinas"
+
                     // Criando Intent e passando os dados com o putExtra()
                     val intent = Intent(this, ArmarioActivity::class.java)
-
                     intent.putExtra("id", armarioId)
                     intent.putExtra("localizacao", localizacao)
                     intent.putExtra("tempoSelecionado", tempo)

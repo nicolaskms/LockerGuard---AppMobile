@@ -16,6 +16,13 @@ LOCAL.PROPERTIES :
 MAPS_API_KEY=AIzaSyCq12NmD5UEFNGb1p_fIfdxjb-kX9B9JyM
 sdk.dir=C\:\\Users\\SEU_USUARIO\\AppData\\Local\\Android\\Sdk
 
+# Log in ADMIN e USUÁRIO para testes, respectivamente
+admin@admin.com
+admin123
+
+nkeismanas11@gmail.com
+nature01
+
 # Como Iniciar:
 
 Abra o projeto LockerGuard no Android Studio
