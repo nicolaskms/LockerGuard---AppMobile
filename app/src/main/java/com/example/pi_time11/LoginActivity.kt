@@ -5,22 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-
-import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
-    // [START declare_auth]
+
     private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
 
     private lateinit var etEmail: TextInputLayout
     private lateinit var etSenha: TextInputLayout
@@ -30,7 +23,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var buttonCadastrar: Button
     private lateinit var buttonContinuarSLogin: Button
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -75,12 +68,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // [START on_start_check_user]
-    public override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val currentUser = auth.currentUser
         if (currentUser != null) {
-
             val email = currentUser.email
             if (email != null && email.contains("@admin.com")) {
                 val intent = Intent(this, GerenteActivity::class.java)
@@ -96,39 +87,22 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     Log.d(TAG, "Não logado!!")
                 }
-
-            if (currentUser.isEmailVerified) {
-                // se usuário estiver logado, automaticmente irá para a próxima tela
-                val intent = Intent(this, MapsActivity::class.java)
-                startActivity(intent)
-                finish()
-                Log.d(TAG, "Logado!")
-            } else {
-                Log.d(TAG, "Não logado!!")
-
             }
         }
     }
-    // [END on_start_check_user]
 
     private fun signIn(email: String, password: String) {
-        // [START sign_in_with_email]
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-
                         if (email.contains("@admin.com")) {
                             val intent = Intent(this, GerenteActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else if (user.isEmailVerified) {
-                            // login efetuado com sucesso
-
-                        if (user.isEmailVerified) {
                             // Sign in success, update UI with the signed-in user's information
-
                             Log.d(TAG, "signInWithEmail:success")
                             val intent = Intent(this, MapsActivity::class.java)
                             startActivity(intent)
@@ -143,16 +117,15 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    //falha no login
+                    // Sign in failed
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
                     Toast.makeText(
                         baseContext,
                         "Falha na autenticação.",
-                        Toast.LENGTH_SHORT,
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
             }
-        // [END sign_in_with_email]
     }
 
     companion object {
