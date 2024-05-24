@@ -26,14 +26,8 @@ class GerenteActivity : AppCompatActivity() {
         buttonFoto = findViewById(R.id.button_ver_foto)
         auth = FirebaseAuth.getInstance()
 
-        photoUri = intent.getStringExtra("photoUri") ?: ""
-
-        // Adicionando Toast para verificar o valor de photoUri
-        Toast.makeText(this, "photoUri: $photoUri", Toast.LENGTH_LONG).show()
-
         buttonFoto.setOnClickListener {
             val intent = Intent(this, FotoActivity::class.java)
-            intent.putExtra("photoUri", photoUri)
             startActivity(intent)
             finish()
         }

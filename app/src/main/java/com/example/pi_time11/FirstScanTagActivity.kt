@@ -36,12 +36,13 @@ class FirstScanTagActivity : AppCompatActivity() {
         val intent = Intent(this, javaClass).apply {
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
+
         pendingIntent = PendingIntent.getActivity(this, 0, intent, flags)
 
         buttonVoltar = findViewById(R.id.btnVoltar)
         buttonVoltar.setOnClickListener {
-            val returnIntent = Intent(this, GerenteActivity::class.java)
-            startActivity(returnIntent)
+            val intent = Intent(this, GerenteActivity::class.java)
+            startActivity(intent)
             finish()
         }
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
@@ -76,7 +77,6 @@ class FirstScanTagActivity : AppCompatActivity() {
 
     private fun handleTag(tag: Tag) {
         val idPedido = intent.getStringExtra("idPedido") ?: return
-
         val ndef = Ndef.get(tag)
 
         if (ndef != null) {
