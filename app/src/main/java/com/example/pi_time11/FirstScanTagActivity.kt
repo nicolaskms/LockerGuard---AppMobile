@@ -39,13 +39,18 @@ class FirstScanTagActivity : AppCompatActivity() {
 
         val photoUri = intent.getStringExtra("photoUri") ?: return
 
+        Log.d("FirstScanTagActivity", "photoUri: $photoUri")
+
+        // Adicionando Toast para verificar o valor de photoUri
+        Toast.makeText(this, "photoUri: $photoUri", Toast.LENGTH_LONG).show()
+
         pendingIntent = PendingIntent.getActivity(this, 0, intent, flags)
 
         buttonVoltar = findViewById(R.id.btnVoltar)
         buttonVoltar.setOnClickListener {
-            val intent = Intent(this, GerenteActivity::class.java)
-            intent.putExtra("photoUri", photoUri)
-            startActivity(intent)
+            val returnIntent = Intent(this, GerenteActivity::class.java)
+            returnIntent.putExtra("photoUri", photoUri)
+            startActivity(returnIntent)
             finish()
         }
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
