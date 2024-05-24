@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -128,15 +127,16 @@ class PagamentoActivity : AppCompatActivity() {
             if (userId != null) {
                 // Gerar pedido no banco de dados Firestore
                 val db = FirebaseFirestore.getInstance()
+                val tempoFormatado = when (tempoSelecionado) {
+                    "30 Min / 30R$" -> "30 min"
+                    "1 Hora / 55R$" -> "1 hora"
+                    "2 Horas / 110R$" -> "2 horas"
+                    "4 Horas / 200 R$" -> "4 horas"
+                    "Diária / 300 R$" -> "Diária"
+                    else -> "Erro"
+                }
                 val pedido = hashMapOf(
-                    "tempo" to when (tempoSelecionado) {
-                        "30 Min / 30R$" -> "30 min"
-                        "1 Hora / 55R$" -> "1 hora"
-                        "2 Horas / 110R$" -> "2 horas"
-                        "4 Horas / 200 R$" -> "4 horas"
-                        "Diária / 300 R$" -> "Diária"
-                        else -> "Erro"
-                    },
+                    "tempo" to tempoFormatado, // Aqui utilizamos a variável tempoFormatado
                     "valor" to valorSelecionado,
                     "userId" to userId,
                     "localId" to id
@@ -148,16 +148,15 @@ class PagamentoActivity : AppCompatActivity() {
                         Toast.makeText(this, "Pedido feito com sucesso!", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, QrCodeActivity::class.java)
                         intent.putExtra("id", id)
+                        intent.putExtra("tempoSelecionado", tempoFormatado)
                         startActivity(intent)
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Erro ao adicionar pedido", e)
                     }
-            } else {
-                Log.d(TAG, "Usuário não autenticado")
-                // Adicione um código aqui para lidar com o usuário não autenticado, se necessário
             }
         }
+
         if (userId != null) {
             val db = FirebaseFirestore.getInstance()
             // Verificar se o usuário possui algum cartão salvo

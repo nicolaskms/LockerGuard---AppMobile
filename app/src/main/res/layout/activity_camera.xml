@@ -2,9 +2,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".CameraActivity">
+    android:layout_height="match_parent">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/capture_button"
+        app:layout_constraintDimensionRatio="H,16:9"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/capture_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capturar Foto"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:src="@drawable/baseline_cloud_upload_24"
+        app:layout_constraintTop_toTopOf="@id/capture_button"
+        app:layout_constraintBottom_toBottomOf="@id/capture_button"
+        app:layout_constraintStart_toStartOf="@id/capture_button"
+        app:layout_constraintEnd_toEndOf="@id/capture_button"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
