@@ -7,8 +7,10 @@ import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -27,15 +29,16 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraView: PreviewView
     private lateinit var imageCapture: ImageCapture
-    private lateinit var capturedImageView: ImageView
     private lateinit var storage: FirebaseStorage
+    private lateinit var captureButton: Button
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         cameraView = findViewById(R.id.camera_view)
-        capturedImageView = findViewById(R.id.captured_image_view)
+        progressBar = findViewById(R.id.progressbar_camera)
         storage = FirebaseStorage.getInstance()
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
@@ -45,7 +48,8 @@ class CameraActivity : AppCompatActivity() {
             setupCamera()
         }
 
-        val captureButton: Button = findViewById(R.id.capture_button)
+        captureButton = findViewById(R.id.capture_button)
+
         captureButton.setOnClickListener { capturePhoto() }
     }
 
@@ -71,6 +75,13 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun capturePhoto() {
+
+        // Desativa o botão de captura
+        captureButton.isEnabled = false
+
+        // Mostra o indicador de progresso
+        progressBar.visibility = View.VISIBLE
+
         val outputDirectory = cacheDir
         val userid = intent.getStringExtra("userid")
         val photoFileName = "$userid.jpg" // Nome do arquivo é apenas o userid
@@ -88,10 +99,12 @@ class CameraActivity : AppCompatActivity() {
 
                 override fun onError(exception: ImageCaptureException) {
                     Toast.makeText(this@CameraActivity, "Erro ao capturar a foto: ${exception.message}", Toast.LENGTH_SHORT).show()
+
+                    captureButton.isEnabled = true
+                    progressBar.visibility = View.GONE
                 }
             })
     }
-
 
     private fun uploadImageToFirebase(photoFile: File) {
         val storageRef = storage.reference
@@ -105,12 +118,15 @@ class CameraActivity : AppCompatActivity() {
 
                 val intent = Intent(this@CameraActivity, FirstScanTagActivity::class.java).apply {
                     putExtra("idPedido",idPedido)
+                    putExtra("photoUri", fileUri.toString())
                 }
                 startActivity(intent)
                 finish()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this@CameraActivity, "Falha no upload: ${e.message}", Toast.LENGTH_SHORT).show()
+                captureButton.isEnabled = true
+                progressBar.visibility = View.GONE
             }
     }
 
