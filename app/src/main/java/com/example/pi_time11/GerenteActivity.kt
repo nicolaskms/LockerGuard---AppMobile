@@ -27,9 +27,8 @@ class GerenteActivity : AppCompatActivity() {
         val photoUri = intent.getStringExtra("photoUri")
 
         buttonFoto.setOnClickListener {
-            val intent = Intent(this, FotoActivity::class.java).apply {
-                putExtra("photoUri", photoUri)
-            }
+            val intent = Intent(this, FotoActivity::class.java)
+            intent.putExtra("photoUri", photoUri)
             startActivity(intent)
             finish()
         }

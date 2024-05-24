@@ -43,9 +43,8 @@ class FirstScanTagActivity : AppCompatActivity() {
 
         buttonVoltar = findViewById(R.id.btnVoltar)
         buttonVoltar.setOnClickListener {
-            val intent = Intent(this, GerenteActivity::class.java).apply {
-                putExtra("photoUri", photoUri)
-            }
+            val intent = Intent(this, GerenteActivity::class.java)
+            intent.putExtra("photoUri", photoUri)
             startActivity(intent)
             finish()
         }
