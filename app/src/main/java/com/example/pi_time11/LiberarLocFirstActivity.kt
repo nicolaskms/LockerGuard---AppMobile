@@ -81,7 +81,7 @@ class LiberarLocFirstActivity : AppCompatActivity() {
                 Log.d("NFC_TAG", "Conteúdo da tag: $tagContent")
                 Toast.makeText(this, "Conteúdo da tag: $tagContent", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, FotoActivity::class.java).apply {//Vai para a tela da foto.
-                    putExtra("pedido_id", tagContent)
+                    putExtra("idpedido", tagContent)
                 }
                 startActivity(intent)
             } else {

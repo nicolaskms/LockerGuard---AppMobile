@@ -6,11 +6,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.io.File
 
 class FotoActivity : AppCompatActivity() {
@@ -28,7 +27,7 @@ class FotoActivity : AppCompatActivity() {
         btnContinuar = findViewById(R.id.continue_button)
         firestore = FirebaseFirestore.getInstance()
 
-        val idPedido = intent.getStringExtra("pedido_id")
+        val idPedido = intent.getStringExtra("idpedido") // Aqui você deve obter o ID do pedido da Intent.
 
         if (idPedido != null) {
             fetchUserIdFromPedido(idPedido)
@@ -50,12 +49,12 @@ class FotoActivity : AppCompatActivity() {
     }
 
     private fun fetchUserIdFromPedido(pedidoId: String) {
-        firestore.collection("pedidos").document(pedidoId).get() // teste sem o id passado pelo NFC
+        firestore.collection("pedidos").document(pedidoId).get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val userId = document.getString("userId")
+                    userId = document.getString("userId")
                     if (userId != null) {
-                        setupImageView(userId)
+                        setupImageView(userId!!)
                     } else {
                         Toast.makeText(this, "UserID não encontrado.", Toast.LENGTH_SHORT).show()
                     }
@@ -71,13 +70,28 @@ class FotoActivity : AppCompatActivity() {
     private fun setupImageView(userId: String) {
         val photoFileName = "$userId.jpg"
         val photoFile = File(cacheDir, photoFileName)
-        val imageView = findViewById<ImageView>(R.id.image_view)
+        imageView = findViewById(R.id.image_view)
 
         if (photoFile.exists()) {
             val photoUri = Uri.fromFile(photoFile)
             imageView.setImageURI(photoUri)
         } else {
-            Toast.makeText(this, "Foto não encontrada", Toast.LENGTH_SHORT).show()
+            downloadPhotoFirebase(userId, photoFile)
         }
+    }
+
+    private fun downloadPhotoFirebase(userId: String, localFile: File) {
+        val storageReference: StorageReference = FirebaseStorage.getInstance().reference
+        val userPhotoRef: StorageReference = storageReference.child("images/$userId.jpg")
+
+        userPhotoRef.getFile(localFile)
+            .addOnSuccessListener {
+                val photoUri = Uri.fromFile(localFile)
+                imageView.setImageURI(photoUri)
+                Toast.makeText(this, "Foto carregada com sucesso", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar a foto: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
