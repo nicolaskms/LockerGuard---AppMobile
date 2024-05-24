@@ -25,7 +25,7 @@ class GerenteActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
 
-        buttonSair.setOnClickListener {
+        buttonFoto.setOnClickListener {
             val intent = Intent(this, FotoActivity::class.java)
             startActivity(intent)
             finish()
