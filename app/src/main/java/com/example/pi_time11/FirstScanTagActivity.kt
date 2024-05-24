@@ -83,10 +83,9 @@ class FirstScanTagActivity : AppCompatActivity() {
         if (ndef != null) {
             ndef.connect()
             val ndefMessage = ndef.cachedNdefMessage
-            val ndefRecord = ndefMessage?.records?.get(0)
-            val tagContent = ndefRecord?.payload?.let { String(it).substring(3) }
+            val tagContent = ndefMessage?.records?.getOrNull(0)?.payload?.let { String(it).substringOrNull(3) }
 
-            if (tagContent != null) {
+            if (!tagContent.isNullOrBlank()) {
                 Log.d("NFC_TAG", "Conteúdo atual da tag: $tagContent")
             } else {
                 Log.d("NFC_TAG", "A tag está vazia")
@@ -106,6 +105,15 @@ class FirstScanTagActivity : AppCompatActivity() {
             Toast.makeText(this, "A tag não suporta NDEF.", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun String.substringOrNull(startIndex: Int): String? {
+        return if (startIndex in 0 until length) {
+            substring(startIndex)
+        } else {
+            null
+        }
+    }
+
 
     private fun updatePedidoWithNfc(idPedido: String) {
         val db = FirebaseFirestore.getInstance()

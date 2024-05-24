@@ -40,8 +40,40 @@
         android:theme="@style/Theme.PITIME11"
         tools:targetApi="31">
         <activity
-            android:name=".LiberarLocActivity"
+            android:name=".FotoActivity"
             android:exported="false" />
+        <activity
+            android:name=".LiberarLocActivity"
+            android:exported="false">
+
+            <!-- Filtro de intenção para ação NDEF_DISCOVERED -->
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <!-- Filtro de intenção para ação TECH_DISCOVERED -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- Filtro de intenção para ação TAG_DISCOVERED -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- Especificação do tipo de tecnologia NFC descoberta -->
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
         <activity
             android:name=".FirstScanTagActivity"
             android:exported="false">
