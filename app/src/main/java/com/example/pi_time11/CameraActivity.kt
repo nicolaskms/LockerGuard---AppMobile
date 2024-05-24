@@ -1,6 +1,7 @@
 package com.example.pi_time11
 
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
@@ -12,6 +13,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -31,6 +33,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var imageCapture: ImageCapture
     private lateinit var capturedImageView: ImageView
     private lateinit var storage: FirebaseStorage
+    private lateinit var currentPhotoFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,19 +77,20 @@ class CameraActivity : AppCompatActivity() {
 
     private fun capturePhoto() {
         val outputDirectory = cacheDir
-        val photoFile = File(outputDirectory, SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".jpg")
 
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        currentPhotoFile = File(outputDirectory, SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".jpg")
+
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(currentPhotoFile).build()
 
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                    val bitmap = BitmapFactory.decodeFile(currentPhotoFile.absolutePath)
                     capturedImageView.setImageBitmap(bitmap)
                     capturedImageView.visibility = ImageView.VISIBLE
                     cameraView.visibility = PreviewView.GONE
 
-                    uploadImageToFirebase(photoFile)
+                    showPhotoOptionsDialog()
 
                     Toast.makeText(this@CameraActivity, "Foto capturada", Toast.LENGTH_SHORT).show()
                 }
@@ -97,6 +101,26 @@ class CameraActivity : AppCompatActivity() {
             })
     }
 
+    private fun showPhotoOptionsDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("O que deseja fazer?")
+            .setMessage("Tirar novamente ou continuar?")
+            .setPositiveButton("Continuar") { _, _ ->
+                uploadImageToFirebase(currentPhotoFile)
+            }
+            .setNegativeButton("Tirar novamente") { _, _ ->
+                restartCamera()
+            }
+            .create()
+            .show()
+    }
+
+    private fun restartCamera() {
+        capturedImageView.visibility = ImageView.GONE
+        cameraView.visibility = PreviewView.VISIBLE
+        setupCamera()
+    }
+
     private fun uploadImageToFirebase(photoFile: File) {
         val storageRef = storage.reference
         val imagesRef = storageRef.child("images/${photoFile.name}")
@@ -105,6 +129,11 @@ class CameraActivity : AppCompatActivity() {
         imagesRef.putFile(fileUri)
             .addOnSuccessListener {
                 Toast.makeText(this@CameraActivity, "Upload bem-sucedido", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(this@CameraActivity, MostrarFotoActivity::class.java)
+                intent.putExtra("photoUri", fileUri.toString())
+                startActivity(intent)
+                finish()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this@CameraActivity, "Falha no upload: ${e.message}", Toast.LENGTH_SHORT).show()
