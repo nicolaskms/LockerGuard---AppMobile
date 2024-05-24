@@ -31,17 +31,20 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraView: PreviewView
     private lateinit var imageCapture: ImageCapture
-    private lateinit var capturedImageView: ImageView
     private lateinit var storage: FirebaseStorage
     private lateinit var currentPhotoFile: File
+
+    private var numPessoas = 1
+    private var currentPerson = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         cameraView = findViewById(R.id.camera_view)
-        capturedImageView = findViewById(R.id.captured_image_view)
         storage = FirebaseStorage.getInstance()
+
+        numPessoas = intent.getIntExtra("numPessoas", 1)
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -85,12 +88,12 @@ class CameraActivity : AppCompatActivity() {
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val bitmap = BitmapFactory.decodeFile(currentPhotoFile.absolutePath)
-                    capturedImageView.setImageBitmap(bitmap)
-                    capturedImageView.visibility = ImageView.VISIBLE
-                    cameraView.visibility = PreviewView.GONE
-
-                    showPhotoOptionsDialog()
+                    if (currentPerson < numPessoas) {
+                        currentPerson++
+                        showNextPersonDialog()
+                    } else {
+                        showPhotoOptionsDialog()
+                    }
 
                     Toast.makeText(this@CameraActivity, "Foto capturada", Toast.LENGTH_SHORT).show()
                 }
@@ -99,6 +102,16 @@ class CameraActivity : AppCompatActivity() {
                     Toast.makeText(this@CameraActivity, "Erro ao capturar a foto: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+    private fun showNextPersonDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Próxima Pessoa")
+            .setMessage("Tire a foto da próxima pessoa")
+            .setPositiveButton("OK") { _, _ ->
+                restartCamera()
+            }
+            .create()
+            .show()
     }
 
     private fun showPhotoOptionsDialog() {
@@ -115,9 +128,18 @@ class CameraActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun releaseCamera() {
+        try {
+            val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+            val cameraProvider = cameraProviderFuture.get()
+            cameraProvider.unbindAll()
+        } catch (e: Exception) {
+            Log.e("Camera", "Erro ao liberar a câmera", e)
+        }
+    }
+
     private fun restartCamera() {
-        capturedImageView.visibility = ImageView.GONE
-        cameraView.visibility = PreviewView.VISIBLE
+        releaseCamera()
         setupCamera()
     }
 

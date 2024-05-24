@@ -22,18 +22,15 @@ class SelecaoPessoasActivity : AppCompatActivity() {
             val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
             val selectedRadioButtonId = radioGroup.checkedRadioButtonId
             if (selectedRadioButtonId != -1) {
-                val radioButton = findViewById<RadioButton>(selectedRadioButtonId)
-                val selectedOption = radioButton.text.toString()
-                Toast.makeText(this, "Opção selecionada: $selectedOption", Toast.LENGTH_SHORT).show()
 
-                if (selectedOption == "Uma pessoa")
-                {
-                    irParaCamera()
+                val selectedOption = when (radioGroup.checkedRadioButtonId) {
+                    R.id.rUmaPessoa -> 1
+                    R.id.rDuasPessoas -> 2
+                    else -> 1
                 }
-                else
-                {
-                    irParaCamera()
-                }
+
+                intent.putExtra("numPessoas", selectedOption)
+                irParaCamera()
 
             } else {
                 Toast.makeText(this, "Por favor, selecione uma opção", Toast.LENGTH_SHORT).show()
